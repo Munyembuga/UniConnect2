@@ -1,0 +1,38 @@
+# =============================================================================
+# UniConnect Backend - Python Dependencies
+# =============================================================================
+
+# --- Core Framework ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# --- Database ---
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.31.0
+alembic==1.14.1
+
+# --- Authentication ---
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+
+# --- Validation & Settings ---
+pydantic==2.7.4
+pydantic-settings==2.4.0
+python-dotenv==1.0.1
+email-validator==2.1.1
+
+# --- Document Processing ---
+PyPDF2==3.0.1
+python-docx==1.1.2
+
+# --- Web Scraping ---
+beautifulsoup4==4.12.2
+requests==2.31.0
+
+# --- Utilities ---
+aiofiles==24.1.0
+
+# --- Logging ---
+loguru==0.7.3

@@ -1,0 +1,79 @@
+# =============================================================================
+# UniConnect AI Student Support Chatbot - Docker Compose
+# =============================================================================
+
+services:
+  # --- PostgreSQL Database ---
+  db:
+    image: postgres:16-alpine
+    container_name: uniconnect_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-uniconnect}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-uniconnect_secret_2024}
+      POSTGRES_DB: ${POSTGRES_DB:-uniconnect_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uniconnect -d uniconnect_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - uniconnect_network
+
+  # --- ChromaDB Vector Database ---
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    container_name: uniconnect_chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - uniconnect_network
+
+  # --- FastAPI Backend ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: uniconnect_backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - upload_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    networks:
+      - uniconnect_network
+
+volumes:
+  postgres_data:
+    driver: local
+  chroma_data:
+    driver: local
+  upload_data:
+    driver: local
+
+networks:
+  uniconnect_network:
+    driver: bridge
