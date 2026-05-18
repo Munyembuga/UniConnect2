@@ -39,7 +39,11 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
     role = Column(
-        Enum(UserRole),
+        Enum(
+            UserRole,
+            name="userrole",
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
         default=UserRole.STUDENT,
         nullable=False,
         index=True,
