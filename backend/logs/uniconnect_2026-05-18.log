@@ -1,0 +1,46 @@
+2026-05-18 04:55:48 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-18 04:55:48 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-18 04:56:50 | WARNING  | app.services.user:login_user:91 | Login failed - user not found: student@example.com
+2026-05-18 04:56:50 | WARNING  | app.api.v1.auth:login:183 | Login failed: Invalid email or password
+2026-05-18 04:57:00 | ERROR    | app.repositories.user:create_user:64 | Error creating user: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('e5cf39c2-2626-478f-8813-5a3e595fb82e'), 'student@example.com', 'John Doe', '$2b$12$zUgxBhYHmeKaJinifIm5ge/NqvZRuBskxzwWymkwEuvL/KW2e00jW', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:57:00 | ERROR    | app.services.user:register_user:65 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('e5cf39c2-2626-478f-8813-5a3e595fb82e'), 'student@example.com', 'John Doe', '$2b$12$zUgxBhYHmeKaJinifIm5ge/NqvZRuBskxzwWymkwEuvL/KW2e00jW', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:57:00 | ERROR    | app.api.v1.auth:register:141 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('e5cf39c2-2626-478f-8813-5a3e595fb82e'), 'student@example.com', 'John Doe', '$2b$12$zUgxBhYHmeKaJinifIm5ge/NqvZRuBskxzwWymkwEuvL/KW2e00jW', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:58:24 | ERROR    | app.repositories.user:create_user:64 | Error creating user: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('c26b30f3-ba90-4b09-8438-bfcb384116fa'), 'student2@example.com', 'John Doe', '$2b$12$RHzx7enBSWAZFlzhvwB30OeATRTj2iufFnR4lqiMilwg35NM20IXS', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:58:24 | ERROR    | app.services.user:register_user:65 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('c26b30f3-ba90-4b09-8438-bfcb384116fa'), 'student2@example.com', 'John Doe', '$2b$12$RHzx7enBSWAZFlzhvwB30OeATRTj2iufFnR4lqiMilwg35NM20IXS', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:58:24 | ERROR    | app.api.v1.auth:register:141 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('c26b30f3-ba90-4b09-8438-bfcb384116fa'), 'student2@example.com', 'John Doe', '$2b$12$RHzx7enBSWAZFlzhvwB30OeATRTj2iufFnR4lqiMilwg35NM20IXS', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:58:59 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-18 04:59:00 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-18 04:59:05 | INFO     | app.repositories.user:create_user:55 | User created: student3@example.com
+2026-05-18 04:59:05 | INFO     | app.services.user:register_user:58 | User registered successfully: student3@example.com
+2026-05-18 04:59:54 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-18 04:59:54 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-18 05:00:22 | INFO     | app.repositories.user:create_user:55 | User created: student@example.com
+2026-05-18 05:00:22 | INFO     | app.services.user:register_user:58 | User registered successfully: student@example.com
+2026-05-18 05:02:57 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-18 05:02:58 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-18 05:04:44 | INFO     | app.repositories.user:update_user:132 | User updated: student@example.com
+2026-05-18 05:04:44 | INFO     | app.services.user:login_user:111 | User logged in successfully: student@example.com
+2026-05-18 05:08:14 | INFO     | app.repositories.user:create_user:55 | User created: admin@test.com
+2026-05-18 05:08:14 | INFO     | app.services.user:register_user:58 | User registered successfully: admin@test.com
+2026-05-18 05:10:09 | INFO     | app.repositories.user:update_user:132 | User updated: admin@test.com
+2026-05-18 05:10:09 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@test.com
+2026-05-18 05:11:39 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-18 05:11:39 | INFO     | app.main:lifespan:21 | Database connection check passed

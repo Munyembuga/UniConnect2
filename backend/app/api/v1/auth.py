@@ -3,7 +3,7 @@
 # Endpoints for user registration, login, token refresh, profile, etc.
 # =============================================================================
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Header, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from loguru import logger
@@ -29,27 +29,15 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 # HELPER FUNCTIONS
 # ============================================================================
 
-async def _get_token_from_header(authorization: str = None) -> str:
-    """Extract bearer token from Authorization header."""
-    if not authorization:
-        return None
-    
-    parts = authorization.split()
-    if len(parts) != 2 or parts[0].lower() != "bearer":
-        return None
-    
-    return parts[1]
-
-
 async def get_current_user(
-    token: str = Depends(_get_token_from_header),
+    authorization: str = Header(None, alias="Authorization"),
     db: AsyncSession = Depends(get_db),
 ) -> UUID:
     """
     Dependency to extract and validate current user from JWT token.
     
     Args:
-        token: JWT token from Authorization header
+        authorization: Authorization header with Bearer token
         db: Database session
         
     Returns:
@@ -58,13 +46,23 @@ async def get_current_user(
     Raises:
         HTTPException: If token is invalid or user not found
     """
-    if not token:
+    if not authorization:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authorization token missing",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    # Extract token from "Bearer <token>" format
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header format. Expected: 'Bearer <token>'",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    token = parts[1]
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(

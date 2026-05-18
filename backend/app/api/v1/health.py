@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 
-router = APIRouter(prefix="/api/v1", tags=["Health"])
+router = APIRouter(tags=["Health"])
 
 
 @router.get("/health", summary="Check API and database health")

@@ -1,0 +1,24 @@
+2026-05-18 04:57:00 | ERROR    | app.repositories.user:create_user:64 | Error creating user: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('e5cf39c2-2626-478f-8813-5a3e595fb82e'), 'student@example.com', 'John Doe', '$2b$12$zUgxBhYHmeKaJinifIm5ge/NqvZRuBskxzwWymkwEuvL/KW2e00jW', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:57:00 | ERROR    | app.services.user:register_user:65 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('e5cf39c2-2626-478f-8813-5a3e595fb82e'), 'student@example.com', 'John Doe', '$2b$12$zUgxBhYHmeKaJinifIm5ge/NqvZRuBskxzwWymkwEuvL/KW2e00jW', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:57:00 | ERROR    | app.api.v1.auth:register:141 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('e5cf39c2-2626-478f-8813-5a3e595fb82e'), 'student@example.com', 'John Doe', '$2b$12$zUgxBhYHmeKaJinifIm5ge/NqvZRuBskxzwWymkwEuvL/KW2e00jW', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:58:24 | ERROR    | app.repositories.user:create_user:64 | Error creating user: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('c26b30f3-ba90-4b09-8438-bfcb384116fa'), 'student2@example.com', 'John Doe', '$2b$12$RHzx7enBSWAZFlzhvwB30OeATRTj2iufFnR4lqiMilwg35NM20IXS', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:58:24 | ERROR    | app.services.user:register_user:65 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('c26b30f3-ba90-4b09-8438-bfcb384116fa'), 'student2@example.com', 'John Doe', '$2b$12$RHzx7enBSWAZFlzhvwB30OeATRTj2iufFnR4lqiMilwg35NM20IXS', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-18 04:58:24 | ERROR    | app.api.v1.auth:register:141 | Unexpected error during registration: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum userrole: "STUDENT"
+[SQL: INSERT INTO users (id, email, full_name, hashed_password, is_active, is_verified, role, last_login) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::BOOLEAN, $6::BOOLEAN, $7::userrole, $8::TIMESTAMP WITH TIME ZONE) RETURNING users.created_at, users.updated_at]
+[parameters: (UUID('c26b30f3-ba90-4b09-8438-bfcb384116fa'), 'student2@example.com', 'John Doe', '$2b$12$RHzx7enBSWAZFlzhvwB30OeATRTj2iufFnR4lqiMilwg35NM20IXS', True, False, 'STUDENT', None)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
