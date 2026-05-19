@@ -696,3 +696,5 @@ violations {
 2026-05-19 16:33:36 | INFO     | app.main:lifespan:21 | Database connection check passed
 2026-05-19 16:33:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
 2026-05-19 16:33:47 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:40:44 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:40:44 | INFO     | app.main:lifespan:21 | Database connection check passed
