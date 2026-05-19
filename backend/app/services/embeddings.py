@@ -1,15 +1,21 @@
 """
-Embedding service — generates vector embeddings via Google Gemini or OpenAI.
+Embedding service — generates vector embeddings via Google Gemini REST API or OpenAI.
+
+Gemini embeddings use the v1 REST endpoint directly because the google-generativeai
+SDK (0.8.x) routes embed_content calls to v1beta, where text-embedding-004 is not
+supported.
 """
+import requests
 from typing import List
 from loguru import logger
 from app.core.config import settings
 
-try:
-    import google.generativeai as genai
-    GENAI_AVAILABLE = True
-except Exception:
-    GENAI_AVAILABLE = False
+# Gemini v1beta REST endpoint — gemini-embedding-001 is the stable model for this key
+_GEMINI_EMBED_MODEL = "models/gemini-embedding-001"
+_GEMINI_EMBED_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    "gemini-embedding-001:embedContent"
+)
 
 try:
     import openai
@@ -17,21 +23,18 @@ try:
 except Exception:
     OPENAI_AVAILABLE = False
 
-# Gemini's text-embedding model name
-_GEMINI_EMBEDDING_MODEL = "models/embedding-001"
-
 
 class EmbeddingService:
     def __init__(self):
         self.provider = None
 
-        if GENAI_AVAILABLE and settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
+        if settings.GEMINI_API_KEY:
             self.provider = "genai"
-            logger.info("Embedding provider: Google Gemini")
+            logger.info("Embedding provider: Google Gemini (text-embedding-004 via REST v1)")
 
         elif OPENAI_AVAILABLE and getattr(settings, "OPENAI_API_KEY", None):
-            openai.api_key = settings.OPENAI_API_KEY
+            import openai as _openai
+            _openai.api_key = settings.OPENAI_API_KEY
             self.provider = "openai"
             logger.info("Embedding provider: OpenAI")
 
@@ -42,78 +45,66 @@ class EmbeddingService:
             )
 
     def embed_texts(self, texts: List[str]) -> List[List[float]]:
-        """
-        Return a list of embedding vectors, one per input text.
-        Raises RuntimeError if no provider is configured.
-        """
         if not texts:
             return []
-
         if self.provider == "genai":
-            return self._embed_with_gemini(texts)
-
+            return self._embed_with_gemini(texts, task_type="RETRIEVAL_DOCUMENT")
         if self.provider == "openai":
             return self._embed_with_openai(texts)
-
         raise RuntimeError(
-            "No embedding provider configured. "
-            "Add GEMINI_API_KEY or OPENAI_API_KEY to your .env file."
+            "Embedding service is not configured. "
+            "Add your GEMINI_API_KEY to the .env file and restart."
         )
 
     def embed_query(self, text: str) -> List[float]:
-        """Embed a single query string (used at chat/search time)."""
         if self.provider == "genai":
-            try:
-                result = genai.embed_content(
-                    model=_GEMINI_EMBEDDING_MODEL,
-                    content=text,
-                    task_type="retrieval_query",
-                )
-                return result["embedding"]
-            except Exception as e:
-                logger.error(f"Gemini query embedding error: {e}")
-                raise
-
+            results = self._embed_with_gemini([text], task_type="RETRIEVAL_QUERY")
+            return results[0]
         if self.provider == "openai":
+            import openai as _openai
+            model = getattr(settings, "OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
             try:
-                model = getattr(settings, "OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
-                r = openai.embeddings.create(model=model, input=[text])
+                r = _openai.embeddings.create(model=model, input=[text])
                 return r.data[0].embedding
             except Exception as e:
                 logger.error(f"OpenAI query embedding error: {e}")
                 raise
-
-        raise RuntimeError("No embedding provider configured.")
+        raise RuntimeError("Embedding service is not configured.")
 
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _embed_with_gemini(self, texts: List[str]) -> List[List[float]]:
+    def _embed_with_gemini(self, texts: List[str], task_type: str) -> List[List[float]]:
         """
-        Gemini embedding via google-generativeai SDK.
-        The SDK does not support true batch embedding, so we loop.
-        task_type="retrieval_document" is correct for knowledge-base content.
+        Call the Gemini v1 REST API directly (not the SDK) to avoid the v1beta
+        routing issue in google-generativeai 0.8.x.
         """
         embeddings = []
         for text in texts:
             try:
-                result = genai.embed_content(
-                    model=_GEMINI_EMBEDDING_MODEL,
-                    content=text,
-                    task_type="retrieval_document",
+                response = requests.post(
+                    _GEMINI_EMBED_URL,
+                    params={"key": settings.GEMINI_API_KEY},
+                    json={
+                        "model": _GEMINI_EMBED_MODEL,
+                        "content": {"parts": [{"text": text}]},
+                        "taskType": task_type,
+                    },
+                    timeout=30,
                 )
-                embeddings.append(result["embedding"])
+                response.raise_for_status()
+                embeddings.append(response.json()["embedding"]["values"])
             except Exception as e:
-                logger.error(f"Gemini embedding error on chunk: {e}")
+                logger.error(f"Gemini embedding error: {e}")
                 raise
         return embeddings
 
     def _embed_with_openai(self, texts: List[str]) -> List[List[float]]:
-        """OpenAI batch embedding (supports true batching)."""
+        import openai as _openai
+        model = getattr(settings, "OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
         try:
-            model = getattr(settings, "OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
-            response = openai.embeddings.create(model=model, input=texts)
+            response = _openai.embeddings.create(model=model, input=texts)
             return [item.embedding for item in response.data]
         except Exception as e:
             logger.error(f"OpenAI embedding error: {e}")

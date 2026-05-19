@@ -10,7 +10,7 @@ from app.api.v1.chat import router as chat_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router)
-api_router.include_router(auth_router)
+api_router.include_router(auth_router, include_in_schema=False)  # hidden during dev testing
 api_router.include_router(documents_router)
 api_router.include_router(websites_router)
 api_router.include_router(processing_router)

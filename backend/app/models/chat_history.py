@@ -41,7 +41,7 @@ class ChatHistory(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    user = relationship("User", foreign_keys=[user_id], back_populates="chat_histories")
+    user = relationship("User", foreign_keys=[user_id])
 
     def __repr__(self) -> str:
         return f"<ChatHistory(id={self.id}, user_id={self.user_id}, resolved={self.is_resolved})>"

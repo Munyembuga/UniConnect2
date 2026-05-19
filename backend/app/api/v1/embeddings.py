@@ -9,7 +9,7 @@ from uuid import UUID
 from loguru import logger
 
 from app.db.session import get_db
-from app.api.v1.auth import get_current_user
+from app.api.v1.dev_auth import get_dev_user_id   # ← DEV: swap for get_current_user to restore auth
 from app.core.config import settings
 from app.services.embeddings import EmbeddingService
 from app.services.chromadb_client import ChromaClient
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/embeddings", tags=["Embeddings"])
 @router.post("/document/{document_id}", summary="Re-embed a document manually")
 async def embed_document(
     document_id: UUID,
-    current_user_id: UUID = Depends(get_current_user),
+    current_user_id: UUID = Depends(get_dev_user_id),   # ← DEV bypass
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -76,7 +76,7 @@ async def embed_document(
 @router.post("/website/{website_id}", summary="Re-embed a website manually")
 async def embed_website(
     website_id: UUID,
-    current_user_id: UUID = Depends(get_current_user),
+    current_user_id: UUID = Depends(get_dev_user_id),   # ← DEV bypass
     db: AsyncSession = Depends(get_db),
 ):
     """

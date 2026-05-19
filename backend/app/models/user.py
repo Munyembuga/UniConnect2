@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Boolean, DateTime, Enum, func
 from sqlalchemy.dialects.postgresql import UUID
-from app.models.base import Base
+from app.db.base import Base
 import enum
 
 
