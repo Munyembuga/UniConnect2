@@ -10,7 +10,7 @@ from uuid import UUID
 from loguru import logger
 
 from app.db.session import get_db
-from app.api.v1.auth import get_current_user
+from app.api.v1.dev_auth import get_dev_user_id   # ← DEV: swap for get_current_user to restore auth
 from app.services.website import WebsiteService, process_website_pipeline
 from app.services.user import UserService
 from app.schemas.website import (
@@ -57,7 +57,7 @@ async def _require_admin(current_user_id: UUID, db: AsyncSession) -> None:
 async def add_website(
     req: WebsiteCreateRequest,
     background_tasks: BackgroundTasks,
-    current_user_id: UUID = Depends(get_current_user),
+    current_user_id: UUID = Depends(get_dev_user_id),
     db: AsyncSession = Depends(get_db),
     service: WebsiteService = Depends(get_website_service),
 ):
@@ -102,7 +102,7 @@ async def add_website(
     description="Admins see all sources; students see sources added by themselves.",
 )
 async def list_websites(
-    current_user_id: UUID = Depends(get_current_user),
+    current_user_id: UUID = Depends(get_dev_user_id),
     db: AsyncSession = Depends(get_db),
     service: WebsiteService = Depends(get_website_service),
 ):
@@ -140,7 +140,7 @@ async def list_websites(
 )
 async def get_website(
     website_id: UUID,
-    current_user_id: UUID = Depends(get_current_user),
+    current_user_id: UUID = Depends(get_dev_user_id),
     service: WebsiteService = Depends(get_website_service),
 ):
     try:
@@ -176,7 +176,7 @@ async def get_website(
 )
 async def delete_website(
     website_id: UUID,
-    current_user_id: UUID = Depends(get_current_user),
+    current_user_id: UUID = Depends(get_dev_user_id),
     db: AsyncSession = Depends(get_db),
     service: WebsiteService = Depends(get_website_service),
 ):
