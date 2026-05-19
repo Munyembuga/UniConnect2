@@ -1,0 +1,698 @@
+2026-05-19 11:50:06 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 11:50:07 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 13:09:16 | ERROR    | app.repositories.user:create_user:60 | User creation failed - email may already exist: student@example.com
+2026-05-19 13:09:16 | WARNING  | app.services.user:register_user:62 | Registration failed: Email student@example.com already exists
+2026-05-19 13:09:16 | WARNING  | app.api.v1.auth:register:133 | Registration error: Email student@example.com already exists
+2026-05-19 13:42:19 | INFO     | app.repositories.user:update_user:132 | User updated: student@example.com
+2026-05-19 13:42:19 | INFO     | app.services.user:login_user:111 | User logged in successfully: student@example.com
+2026-05-19 13:46:14 | INFO     | app.repositories.user:create_user:55 | User created: admin@example.com
+2026-05-19 13:46:14 | INFO     | app.services.user:register_user:58 | User registered successfully: admin@example.com
+2026-05-19 14:55:24 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 14:55:28 | WARNING  | app.main:lifespan:23 | Database connection check failed during startup
+2026-05-19 14:55:37 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 14:55:41 | WARNING  | app.main:lifespan:23 | Database connection check failed during startup
+2026-05-19 14:56:29 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 14:56:33 | WARNING  | app.main:lifespan:23 | Database connection check failed during startup
+2026-05-19 14:57:07 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 14:57:07 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:03:15 | INFO     | app.api.v1.dev_auth:get_dev_user_id:49 | Dev admin user created for testing
+2026-05-19 15:03:15 | ERROR    | app.repositories.document:get_all_documents:84 | Error retrieving all documents: When initializing mapper Mapper[Document(documents)], expression 'User' failed to locate a name ('User'). If this is a class name, consider adding this relationship() to the <class 'app.models.document.Document'> class after both dependent classes have been defined.
+2026-05-19 15:03:24 | ERROR    | app.repositories.document:get_all_documents:84 | Error retrieving all documents: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Document(documents)]'. Original exception was: When initializing mapper Mapper[Document(documents)], expression 'User' failed to locate a name ('User'). If this is a class name, consider adding this relationship() to the <class 'app.models.document.Document'> class after both dependent classes have been defined.
+2026-05-19 15:04:03 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.pdf
+2026-05-19 15:04:03 | ERROR    | app.repositories.document:create_document:52 | Error creating document: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Document(documents)]'. Original exception was: When initializing mapper Mapper[Document(documents)], expression 'User' failed to locate a name ('User'). If this is a class name, consider adding this relationship() to the <class 'app.models.document.Document'> class after both dependent classes have been defined.
+2026-05-19 15:04:03 | ERROR    | app.services.document:upload_document:85 | Error uploading document: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Document(documents)]'. Original exception was: When initializing mapper Mapper[Document(documents)], expression 'User' failed to locate a name ('User'). If this is a class name, consider adding this relationship() to the <class 'app.models.document.Document'> class after both dependent classes have been defined.
+2026-05-19 15:04:03 | ERROR    | app.api.v1.documents:upload_document:89 | Error uploading document: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Document(documents)]'. Original exception was: When initializing mapper Mapper[Document(documents)], expression 'User' failed to locate a name ('User'). If this is a class name, consider adding this relationship() to the <class 'app.models.document.Document'> class after both dependent classes have been defined.
+2026-05-19 15:05:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:05:47 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:05:52 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:05:52 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:06:05 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:06:05 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:08:16 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:08:16 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:08:33 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:08:33 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:09:33 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.pdf
+2026-05-19 15:09:33 | ERROR    | app.repositories.document:create_document:52 | Error creating document: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum documenttype: "PDF"
+[SQL: INSERT INTO documents (id, user_id, filename, document_type, file_path, file_size, content_preview, extracted_text, total_chunks, is_processed, created_at, updated_at) VALUES ($1::UUID, $2::UUID, $3::VARCHAR, $4::documenttype, $5::VARCHAR, $6::INTEGER, $7::VARCHAR, $8::VARCHAR, $9::INTEGER, $10::VARCHAR, $11::TIMESTAMP WITHOUT TIME ZONE, $12::TIMESTAMP WITHOUT TIME ZONE)]
+[parameters: (UUID('71581e22-358b-4aad-bf9f-e8fa3e2f4a35'), UUID('00000000-0000-0000-0000-000000000001'), 'undergraduate_entry_requirements_2025_2026.pdf', 'PDF', '/app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.pdf', 5851154, None, None, 0, 'pending', datetime.datetime(2026, 5, 19, 15, 9, 33, 61383), datetime.datetime(2026, 5, 19, 15, 9, 33, 61385))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-19 15:09:33 | ERROR    | app.services.document:upload_document:85 | Error uploading document: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum documenttype: "PDF"
+[SQL: INSERT INTO documents (id, user_id, filename, document_type, file_path, file_size, content_preview, extracted_text, total_chunks, is_processed, created_at, updated_at) VALUES ($1::UUID, $2::UUID, $3::VARCHAR, $4::documenttype, $5::VARCHAR, $6::INTEGER, $7::VARCHAR, $8::VARCHAR, $9::INTEGER, $10::VARCHAR, $11::TIMESTAMP WITHOUT TIME ZONE, $12::TIMESTAMP WITHOUT TIME ZONE)]
+[parameters: (UUID('71581e22-358b-4aad-bf9f-e8fa3e2f4a35'), UUID('00000000-0000-0000-0000-000000000001'), 'undergraduate_entry_requirements_2025_2026.pdf', 'PDF', '/app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.pdf', 5851154, None, None, 0, 'pending', datetime.datetime(2026, 5, 19, 15, 9, 33, 61383), datetime.datetime(2026, 5, 19, 15, 9, 33, 61385))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-19 15:09:33 | ERROR    | app.api.v1.documents:upload_document:89 | Error uploading document: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum documenttype: "PDF"
+[SQL: INSERT INTO documents (id, user_id, filename, document_type, file_path, file_size, content_preview, extracted_text, total_chunks, is_processed, created_at, updated_at) VALUES ($1::UUID, $2::UUID, $3::VARCHAR, $4::documenttype, $5::VARCHAR, $6::INTEGER, $7::VARCHAR, $8::VARCHAR, $9::INTEGER, $10::VARCHAR, $11::TIMESTAMP WITHOUT TIME ZONE, $12::TIMESTAMP WITHOUT TIME ZONE)]
+[parameters: (UUID('71581e22-358b-4aad-bf9f-e8fa3e2f4a35'), UUID('00000000-0000-0000-0000-000000000001'), 'undergraduate_entry_requirements_2025_2026.pdf', 'PDF', '/app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.pdf', 5851154, None, None, 0, 'pending', datetime.datetime(2026, 5, 19, 15, 9, 33, 61383), datetime.datetime(2026, 5, 19, 15, 9, 33, 61385))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2026-05-19 15:11:03 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:11:03 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:11:17 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:11:17 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:12:07 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_academic_calendar_year_one_students.pdf
+2026-05-19 15:12:07 | INFO     | app.repositories.document:create_document:48 | Document created: academic_calendar_year_one_students.pdf (ID: 1ef7075b-313a-4ebd-83de-1159ee82cef5)
+2026-05-19 15:12:07 | INFO     | app.services.document:upload_document:76 | Document uploaded: academic_calendar_year_one_students.pdf (ID: 1ef7075b-313a-4ebd-83de-1159ee82cef5, text_len=0)
+2026-05-19 15:12:07 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: academic_calendar_year_one_students.pdf — pipeline queued
+2026-05-19 15:12:07 | ERROR    | app.services.document:process_document_pipeline:251 | Pipeline: no extracted text for document 1ef7075b-313a-4ebd-83de-1159ee82cef5
+2026-05-19 15:12:07 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 1ef7075b-313a-4ebd-83de-1159ee82cef5, status: failed
+2026-05-19 15:13:28 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_Test.txt
+2026-05-19 15:13:28 | INFO     | app.repositories.document:create_document:48 | Document created: Test.txt (ID: d6533a2b-07d4-4d64-8a46-6810c1b7100c)
+2026-05-19 15:13:28 | INFO     | app.services.document:upload_document:76 | Document uploaded: Test.txt (ID: d6533a2b-07d4-4d64-8a46-6810c1b7100c, text_len=5)
+2026-05-19 15:13:28 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: Test.txt — pipeline queued
+2026-05-19 15:13:28 | INFO     | app.repositories.document:update_document_status:109 | Document updated: d6533a2b-07d4-4d64-8a46-6810c1b7100c, status: processing
+2026-05-19 15:13:28 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-19 15:13:28 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 1 chunks for document d6533a2b-07d4-4d64-8a46-6810c1b7100c
+2026-05-19 15:13:28 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:13:28 | WARNING  | app.services.chromadb_client:__init__:23 | chromadb library not installed — vector operations are no-ops.
+2026-05-19 15:13:28 | ERROR    | app.services.document:process_document_pipeline:309 | Pipeline failed for document d6533a2b-07d4-4d64-8a46-6810c1b7100c: No embedding provider configured. Add GEMINI_API_KEY or OPENAI_API_KEY to your .env file.
+2026-05-19 15:13:28 | INFO     | app.repositories.document:update_document_status:109 | Document updated: d6533a2b-07d4-4d64-8a46-6810c1b7100c, status: failed
+2026-05-19 15:16:44 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.docx
+2026-05-19 15:16:44 | INFO     | app.repositories.document:create_document:48 | Document created: undergraduate_entry_requirements_2025_2026.docx (ID: 0615e022-3390-4f85-86e0-92153258eba3)
+2026-05-19 15:16:44 | INFO     | app.services.document:upload_document:76 | Document uploaded: undergraduate_entry_requirements_2025_2026.docx (ID: 0615e022-3390-4f85-86e0-92153258eba3, text_len=0)
+2026-05-19 15:16:44 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: undergraduate_entry_requirements_2025_2026.docx — pipeline queued
+2026-05-19 15:16:44 | ERROR    | app.services.document:process_document_pipeline:251 | Pipeline: no extracted text for document 0615e022-3390-4f85-86e0-92153258eba3
+2026-05-19 15:16:44 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 0615e022-3390-4f85-86e0-92153258eba3, status: failed
+2026-05-19 15:21:19 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_Golden_Treasure_Supply_Agreement.pdf
+2026-05-19 15:21:19 | INFO     | app.repositories.document:create_document:48 | Document created: Golden_Treasure_Supply_Agreement.pdf (ID: 8036f648-7fed-414f-b25f-908aa0bd3e94)
+2026-05-19 15:21:19 | INFO     | app.services.document:upload_document:76 | Document uploaded: Golden_Treasure_Supply_Agreement.pdf (ID: 8036f648-7fed-414f-b25f-908aa0bd3e94, text_len=6798)
+2026-05-19 15:21:19 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: Golden_Treasure_Supply_Agreement.pdf — pipeline queued
+2026-05-19 15:21:19 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 8036f648-7fed-414f-b25f-908aa0bd3e94, status: processing
+2026-05-19 15:21:19 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-19 15:21:19 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 7 chunks for document 8036f648-7fed-414f-b25f-908aa0bd3e94
+2026-05-19 15:21:19 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:21:19 | WARNING  | app.services.chromadb_client:__init__:23 | chromadb library not installed — vector operations are no-ops.
+2026-05-19 15:21:19 | ERROR    | app.services.document:process_document_pipeline:309 | Pipeline failed for document 8036f648-7fed-414f-b25f-908aa0bd3e94: No embedding provider configured. Add GEMINI_API_KEY or OPENAI_API_KEY to your .env file.
+2026-05-19 15:21:19 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 8036f648-7fed-414f-b25f-908aa0bd3e94, status: failed
+2026-05-19 15:22:28 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:24:53 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:25:34 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:25:34 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:25:58 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:34:15 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:35:08 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:35:09 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:35:11 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:35:12 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:35:12 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:35:13 | WARNING  | app.services.embeddings:__init__:39 | No embedding provider configured — set GEMINI_API_KEY or OPENAI_API_KEY in .env. Embeddings will be unavailable.
+2026-05-19 15:39:17 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:39:17 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:39:39 | INFO     | app.services.embeddings:__init__:31 | Embedding provider: Google Gemini
+2026-05-19 15:39:53 | INFO     | app.services.embeddings:__init__:31 | Embedding provider: Google Gemini
+2026-05-19 15:40:08 | INFO     | app.services.embeddings:__init__:31 | Embedding provider: Google Gemini
+2026-05-19 15:40:09 | ERROR    | app.services.embeddings:embed_query:74 | Gemini query embedding error: 404 models/embedding-001 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:40:09 | ERROR    | app.services.chat:ask_question:44 | Embedding failed: 404 models/embedding-001 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:41:14 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:41:14 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:41:25 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:41:26 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:42:52 | INFO     | app.api.v1.processing:process_document:42 | Manual pipeline triggered for document 8036f648-7fed-414f-b25f-908aa0bd3e94
+2026-05-19 15:42:52 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 8036f648-7fed-414f-b25f-908aa0bd3e94, status: processing
+2026-05-19 15:42:52 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-19 15:42:52 | INFO     | app.repositories.document_chunk:delete_by_document:49 | Deleted 7 existing chunks for document 8036f648-7fed-414f-b25f-908aa0bd3e94
+2026-05-19 15:42:52 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 7 chunks for document 8036f648-7fed-414f-b25f-908aa0bd3e94
+2026-05-19 15:42:52 | INFO     | app.services.embeddings:__init__:31 | Embedding provider: Google Gemini
+2026-05-19 15:42:54 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 15:42:55 | ERROR    | app.services.embeddings:_embed_with_gemini:108 | Gemini embedding error on chunk: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:42:55 | ERROR    | app.services.document:process_document_pipeline:309 | Pipeline failed for document 8036f648-7fed-414f-b25f-908aa0bd3e94: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:42:55 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 8036f648-7fed-414f-b25f-908aa0bd3e94, status: failed
+2026-05-19 15:43:03 | INFO     | app.services.embeddings:__init__:31 | Embedding provider: Google Gemini
+2026-05-19 15:43:05 | ERROR    | app.services.embeddings:embed_query:74 | Gemini query embedding error: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:43:05 | ERROR    | app.services.chat:ask_question:44 | Embedding failed: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:43:31 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_Golden_Treasure_Supply_Agreement.pdf
+2026-05-19 15:43:31 | INFO     | app.repositories.document:create_document:48 | Document created: Golden_Treasure_Supply_Agreement.pdf (ID: 2536dfec-198c-4174-b45b-d45fc9c4437c)
+2026-05-19 15:43:31 | INFO     | app.services.document:upload_document:76 | Document uploaded: Golden_Treasure_Supply_Agreement.pdf (ID: 2536dfec-198c-4174-b45b-d45fc9c4437c, text_len=6798)
+2026-05-19 15:43:31 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: Golden_Treasure_Supply_Agreement.pdf — pipeline queued
+2026-05-19 15:43:31 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2536dfec-198c-4174-b45b-d45fc9c4437c, status: processing
+2026-05-19 15:43:31 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-19 15:43:31 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 7 chunks for document 2536dfec-198c-4174-b45b-d45fc9c4437c
+2026-05-19 15:43:31 | INFO     | app.services.embeddings:__init__:31 | Embedding provider: Google Gemini
+2026-05-19 15:43:31 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 15:43:32 | ERROR    | app.services.embeddings:_embed_with_gemini:108 | Gemini embedding error on chunk: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:43:32 | ERROR    | app.services.document:process_document_pipeline:309 | Pipeline failed for document 2536dfec-198c-4174-b45b-d45fc9c4437c: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:43:33 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2536dfec-198c-4174-b45b-d45fc9c4437c, status: failed
+2026-05-19 15:44:02 | INFO     | app.services.embeddings:__init__:31 | Embedding provider: Google Gemini
+2026-05-19 15:44:03 | ERROR    | app.services.embeddings:embed_query:74 | Gemini query embedding error: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:44:03 | ERROR    | app.services.chat:ask_question:44 | Embedding failed: 404 models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-19 15:46:14 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:46:14 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:46:26 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:46:26 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:46:38 | INFO     | app.api.v1.processing:process_document:42 | Manual pipeline triggered for document 2536dfec-198c-4174-b45b-d45fc9c4437c
+2026-05-19 15:46:38 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2536dfec-198c-4174-b45b-d45fc9c4437c, status: processing
+2026-05-19 15:46:38 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-19 15:46:38 | INFO     | app.repositories.document_chunk:delete_by_document:49 | Deleted 7 existing chunks for document 2536dfec-198c-4174-b45b-d45fc9c4437c
+2026-05-19 15:46:38 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 7 chunks for document 2536dfec-198c-4174-b45b-d45fc9c4437c
+2026-05-19 15:46:38 | INFO     | app.services.embeddings:__init__:32 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 15:46:39 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 15:46:40 | ERROR    | app.services.embeddings:_embed_with_gemini:98 | Gemini embedding error: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1/models/text-embedding-004:embedContent?key=AIzaSyAsK9NVEPTzazPGmhHUJn9zlKxSSHCnl8Q
+2026-05-19 15:46:40 | ERROR    | app.services.document:process_document_pipeline:309 | Pipeline failed for document 2536dfec-198c-4174-b45b-d45fc9c4437c: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1/models/text-embedding-004:embedContent?key=AIzaSyAsK9NVEPTzazPGmhHUJn9zlKxSSHCnl8Q
+2026-05-19 15:46:40 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2536dfec-198c-4174-b45b-d45fc9c4437c, status: failed
+2026-05-19 15:48:32 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:48:32 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:48:38 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:48:38 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:48:50 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 15:48:50 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 15:48:52 | INFO     | app.api.v1.processing:process_document:42 | Manual pipeline triggered for document 2536dfec-198c-4174-b45b-d45fc9c4437c
+2026-05-19 15:48:52 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2536dfec-198c-4174-b45b-d45fc9c4437c, status: processing
+2026-05-19 15:48:52 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-19 15:48:52 | INFO     | app.repositories.document_chunk:delete_by_document:49 | Deleted 7 existing chunks for document 2536dfec-198c-4174-b45b-d45fc9c4437c
+2026-05-19 15:48:52 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 7 chunks for document 2536dfec-198c-4174-b45b-d45fc9c4437c
+2026-05-19 15:48:52 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 15:48:53 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 15:49:03 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 7 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-19 15:49:03 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2536dfec-198c-4174-b45b-d45fc9c4437c, status: completed
+2026-05-19 15:49:03 | INFO     | app.services.document:process_document_pipeline:303 | Pipeline complete: document 2536dfec-198c-4174-b45b-d45fc9c4437c, 7 chunks indexed
+2026-05-19 15:49:48 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 15:49:49 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 15:49:50 | ERROR    | app.services.chat:ask_question:138 | Gemini generation failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+Please retry in 8.67356116s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 8
+}
+]
+2026-05-19 15:50:36 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 15:50:37 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 15:50:38 | ERROR    | app.services.chat:ask_question:138 | Gemini generation failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+Please retry in 21.135742168s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 21
+}
+]
+2026-05-19 16:06:05 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:06:05 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:06:59 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:06:59 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:07:16 | INFO     | app.services.chat:ask_question:131 | General question detected, skipping RAG: 'Hello'
+2026-05-19 16:07:17 | ERROR    | app.services.chat:_answer_general_question:96 | General question Gemini call failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+Please retry in 42.649675273s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 42
+}
+]
+2026-05-19 16:07:17 | INFO     | app.services.chat:ask_question:131 | General question detected, skipping RAG: 'What is today's date?'
+2026-05-19 16:07:18 | ERROR    | app.services.chat:_answer_general_question:96 | General question Gemini call failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+Please retry in 41.161987165s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 41
+}
+]
+2026-05-19 16:07:18 | INFO     | app.services.chat:ask_question:131 | General question detected, skipping RAG: 'Who are you?'
+2026-05-19 16:07:19 | ERROR    | app.services.chat:_answer_general_question:96 | General question Gemini call failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+Please retry in 39.922160671s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 39
+}
+]
+2026-05-19 16:07:19 | INFO     | app.services.chat:ask_question:131 | General question detected, skipping RAG: 'What can you do?'
+2026-05-19 16:07:21 | ERROR    | app.services.chat:_answer_general_question:96 | General question Gemini call failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+Please retry in 38.615157966s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 38
+}
+]
+2026-05-19 16:08:34 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:08:34 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:08:43 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:08:43 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:09:35 | INFO     | app.services.chat:ask_question:140 | General question detected, skipping RAG: 'hello how are u doing'
+2026-05-19 16:09:37 | ERROR    | app.services.chat:_answer_general_question:96 | General question Gemini call failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+Please retry in 22.501699471s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 22
+}
+]
+2026-05-19 16:10:19 | INFO     | app.services.chat:ask_question:140 | General question detected, skipping RAG: 'what is the current time?'
+2026-05-19 16:10:20 | ERROR    | app.services.chat:_answer_general_question:96 | General question Gemini call failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+Please retry in 39.354973269s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 39
+}
+]
+2026-05-19 16:10:36 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 16:10:38 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 16:11:09 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 16:11:11 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 16:16:37 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:16:37 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:16:45 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 16:18:07 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_academic_calendar_year_one_students.pdf
+2026-05-19 16:18:07 | INFO     | app.repositories.document:create_document:48 | Document created: academic_calendar_year_one_students.pdf (ID: db9e4187-3692-4bbe-8382-55ff2b92355f)
+2026-05-19 16:18:07 | INFO     | app.services.document:upload_document:76 | Document uploaded: academic_calendar_year_one_students.pdf (ID: db9e4187-3692-4bbe-8382-55ff2b92355f, text_len=0)
+2026-05-19 16:18:07 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: academic_calendar_year_one_students.pdf — pipeline queued
+2026-05-19 16:18:07 | ERROR    | app.services.document:process_document_pipeline:251 | Pipeline: no extracted text for document db9e4187-3692-4bbe-8382-55ff2b92355f
+2026-05-19 16:18:07 | INFO     | app.repositories.document:update_document_status:109 | Document updated: db9e4187-3692-4bbe-8382-55ff2b92355f, status: failed
+2026-05-19 16:18:23 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.docx
+2026-05-19 16:18:23 | INFO     | app.repositories.document:create_document:48 | Document created: undergraduate_entry_requirements_2025_2026.docx (ID: 5897859d-5eb9-4535-9b35-2c03cc9da8dc)
+2026-05-19 16:18:23 | INFO     | app.services.document:upload_document:76 | Document uploaded: undergraduate_entry_requirements_2025_2026.docx (ID: 5897859d-5eb9-4535-9b35-2c03cc9da8dc, text_len=0)
+2026-05-19 16:18:23 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: undergraduate_entry_requirements_2025_2026.docx — pipeline queued
+2026-05-19 16:18:23 | ERROR    | app.services.document:process_document_pipeline:251 | Pipeline: no extracted text for document 5897859d-5eb9-4535-9b35-2c03cc9da8dc
+2026-05-19 16:18:23 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 5897859d-5eb9-4535-9b35-2c03cc9da8dc, status: failed
+2026-05-19 16:19:13 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 16:23:22 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 16:23:24 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 16:23:27 | ERROR    | app.services.chat:ask_question:249 | Gemini generation failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+Please retry in 32.133005889s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 32
+}
+]
+2026-05-19 16:31:13 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:31:13 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:31:22 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:31:22 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:31:58 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-19 16:32:00 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-19 16:32:02 | ERROR    | app.services.chat:ask_question:252 | Gemini generation failed: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+Please retry in 56.842776337s. [links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "GenerateContentInputTokensPerModelPerMinute-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 56
+}
+]
+2026-05-19 16:33:13 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:33:24 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:33:36 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:33:36 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-19 16:33:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-19 16:33:47 | INFO     | app.main:lifespan:21 | Database connection check passed

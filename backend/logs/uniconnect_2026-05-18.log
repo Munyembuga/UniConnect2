@@ -44,3 +44,7 @@
 2026-05-18 05:10:09 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@test.com
 2026-05-18 05:11:39 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
 2026-05-18 05:11:39 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-18 05:12:47 | INFO     | app.repositories.user:update_user:132 | User updated: admin@test.com
+2026-05-18 05:12:47 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@test.com
+2026-05-18 05:14:22 | INFO     | app.repositories.user:update_user:132 | User updated: admin@test.com
+2026-05-18 05:14:22 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@test.com

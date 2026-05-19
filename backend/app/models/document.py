@@ -44,7 +44,10 @@ class Document(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, index=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     filename = Column(String(255), nullable=False)
-    document_type = Column(SQLEnum(DocumentType), nullable=False)
+    document_type = Column(
+        SQLEnum(DocumentType, name="documenttype", values_callable=lambda x: [e.value for e in x]),
+        nullable=False,
+    )
     file_path = Column(String(500), nullable=False)
     file_size = Column(Integer, nullable=False)  # in bytes
     content_preview = Column(Text, nullable=True)

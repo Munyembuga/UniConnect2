@@ -28,7 +28,21 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Production-ready FastAPI backend for UniConnect - AI Student Support Chatbot.",
+    description=(
+        "## UniConnect — AI Student Support Chatbot\n\n"
+        "> **DEV / TESTING MODE** — No authentication required. "
+        "All endpoints work directly without tokens or login.\n\n"
+        "### Quick test flow\n"
+        "1. **Upload a document** → `POST /api/v1/documents/upload` "
+        "(attach a PDF, DOCX, or TXT file). "
+        "The response includes `text_preview` (first 500 chars) to confirm extraction.\n"
+        "2. **Poll until processed** → `GET /api/v1/documents/{id}` "
+        "until `is_processed` is `completed`.\n"
+        "3. **Ask a question** → `POST /api/v1/chat/ask` with "
+        "`{\"question\": \"...\"}`. Returns an AI-generated answer, "
+        "source passages, and a confidence score.\n\n"
+        "No `Authorization` header needed anywhere."
+    ),
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
