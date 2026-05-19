@@ -28,6 +28,10 @@ class DocumentUploadResponse(BaseModel):
     )
     total_chunks: int = Field(..., description="Number of chunks (0 until pipeline completes)")
     created_at: datetime
+    text_preview: Optional[str] = Field(
+        None,
+        description="First 500 chars of extracted text — proves extraction succeeded",
+    )
     message: str = Field(
         default="Document uploaded. Processing started in background.",
         description="Human-readable status hint for the frontend",
