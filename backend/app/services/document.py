@@ -350,18 +350,27 @@ async def process_document_pipeline(document_id: UUID) -> None:
                 await doc_repo.update_document_status(document_id, "failed")
                 return
 
+            text_len = len(doc.extracted_text)
+            logger.info(f"Pipeline: starting for {doc.filename} ({text_len} chars)")
             await doc_repo.update_document_status(document_id, "processing")
 
-            # 1. Split into chunks
-            chunks_text = split_text(
-                doc.extracted_text,
-                settings.CHUNK_SIZE,
-                settings.CHUNK_OVERLAP,
-            )
+            # 1. Split into chunks — treat very short text as a single chunk
+            if text_len < settings.CHUNK_SIZE:
+                chunks_text = [doc.extracted_text]
+                logger.info(f"Pipeline: text shorter than chunk size, using as single chunk")
+            else:
+                chunks_text = split_text(
+                    doc.extracted_text,
+                    settings.CHUNK_SIZE,
+                    settings.CHUNK_OVERLAP,
+                )
+
             if not chunks_text:
                 logger.error(f"Pipeline: chunking produced no chunks for {document_id}")
                 await doc_repo.update_document_status(document_id, "failed")
                 return
+
+            logger.info(f"Pipeline: {len(chunks_text)} chunks created")
 
             # 2. Remove old chunks (idempotent re-processing)
             await chunk_repo.delete_by_document(document_id)
@@ -370,6 +379,7 @@ async def process_document_pipeline(document_id: UUID) -> None:
             db_chunks = await chunk_repo.create_chunks(document_id, chunks_text)
 
             # 4 & 5. Embed + store in ChromaDB
+            logger.info(f"Pipeline: starting embedding for {len(db_chunks)} chunks")
             embed_service = EmbeddingService()
             chroma = ChromaClient()
 
@@ -385,7 +395,9 @@ async def process_document_pipeline(document_id: UUID) -> None:
                 for c in db_chunks
             ]
 
+            logger.info(f"Pipeline: calling Gemini embedding API...")
             vectors = embed_service.embed_texts(texts)
+            logger.info(f"Pipeline: embeddings done, upserting to ChromaDB...")
             chroma.upsert(
                 settings.CHROMA_COLLECTION_NAME,
                 ids=ids,
