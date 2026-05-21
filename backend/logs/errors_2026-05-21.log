@@ -7,3 +7,13 @@
 2026-05-21 10:54:20 | ERROR    | app.services.document:process_document_pipeline:251 | Pipeline: no extracted text for document 8ba9b90b-4bca-428e-bbd0-84e0bc1a0fb7
 2026-05-21 11:04:40 | ERROR    | app.services.document:process_document_pipeline:349 | Pipeline: no extracted text for document 7ffd0678-87b3-4fb1-bc94-e7c09540dfd3
 2026-05-21 11:05:18 | ERROR    | app.services.document:process_document_pipeline:349 | Pipeline: no extracted text for document 8fe1e2bb-2f57-489c-ad97-51fc2a8ee412
+2026-05-21 11:44:47 | ERROR    | app.services.embeddings:_embed_with_gemini:131 | Gemini embedding error after 3 attempts: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:48:59 | ERROR    | app.services.chat:ask_question:348 | Gemini generation failed: 429 {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a
+2026-05-21 11:49:12 | ERROR    | app.services.embeddings:_embed_with_gemini:131 | Gemini embedding error after 3 attempts: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:54:00 | ERROR    | app.services.chat:ask_question:348 | Gemini generation failed: 429 {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a

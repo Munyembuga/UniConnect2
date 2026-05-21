@@ -256,3 +256,34 @@
 2026-05-21 11:08:36 | INFO     | app.services.chat:ask_question:294 | Keyword search: 1 chunks matched
 2026-05-21 11:08:36 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 3 chunks (vector=5, keyword=1)
 2026-05-21 11:08:37 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 503 on gemini-2.5-flash — waiting 10s (attempt 1/2)
+2026-05-21 11:44:34 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 11:44:47 | ERROR    | app.services.embeddings:_embed_with_gemini:131 | Gemini embedding error after 3 attempts: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:44:47 | WARNING  | app.services.chat:ask_question:281 | Vector search failed: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g — falling back to keyword only
+2026-05-21 11:44:47 | INFO     | app.services.chat:ask_question:294 | Keyword search: 1 chunks matched
+2026-05-21 11:44:47 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 1 chunks (vector=0, keyword=1)
+2026-05-21 11:44:47 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.5-flash — waiting 11s (attempt 1/2)
+2026-05-21 11:44:59 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.5-flash — waiting 0s (attempt 2/2)
+2026-05-21 11:45:00 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash — waiting 59s (attempt 1/2)
+2026-05-21 11:46:00 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash — waiting 59s (attempt 2/2)
+2026-05-21 11:47:02 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash-lite — waiting 57s (attempt 1/2)
+2026-05-21 11:47:59 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash-lite — waiting 59s (attempt 2/2)
+2026-05-21 11:48:59 | ERROR    | app.services.chat:ask_question:348 | Gemini generation failed: 429 {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a
+2026-05-21 11:48:59 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 11:49:12 | ERROR    | app.services.embeddings:_embed_with_gemini:131 | Gemini embedding error after 3 attempts: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:49:12 | WARNING  | app.services.chat:ask_question:281 | Vector search failed: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g — falling back to keyword only
+2026-05-21 11:49:12 | INFO     | app.services.chat:ask_question:294 | Keyword search: 5 chunks matched
+2026-05-21 11:49:12 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 2 chunks (vector=0, keyword=5)
+2026-05-21 11:49:18 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.5-flash — waiting 41s (attempt 2/2)
+2026-05-21 11:50:01 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash — waiting 58s (attempt 1/2)
+2026-05-21 11:51:00 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash — waiting 59s (attempt 2/2)
+2026-05-21 11:52:01 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash-lite — waiting 58s (attempt 1/2)
+2026-05-21 11:53:00 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 429 on gemini-2.0-flash-lite — waiting 59s (attempt 2/2)
+2026-05-21 11:54:00 | ERROR    | app.services.chat:ask_question:348 | Gemini generation failed: 429 {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a
+2026-05-21 12:00:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 12:00:48 | INFO     | app.main:lifespan:21 | Database connection check passed
