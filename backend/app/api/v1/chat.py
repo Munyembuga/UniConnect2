@@ -41,7 +41,18 @@ class AskResponse(BaseModel):
     )
 
 
-# ── Endpoint ─────────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _truncate_sources(sources: List[str], max_chars: int = 180) -> List[str]:
+    """Trim each source to a short preview so the response stays readable."""
+    out = []
+    for s in sources:
+        s = s.strip()
+        out.append(s[:max_chars] + "…" if len(s) > max_chars else s)
+    return out
+
+
+# ── Endpoint ──────────────────────────────────────────────────────────────────
 
 @router.post(
     "/ask",
@@ -61,7 +72,7 @@ async def ask(body: AskRequest) -> AskResponse:
         return AskResponse(
             question=body.question,
             answer=result["answer"],
-            sources=result["sources"],
+            sources=_truncate_sources(result["sources"]),
             confidence=result["confidence"],
             error=result["error"],
         )

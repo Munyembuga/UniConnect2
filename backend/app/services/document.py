@@ -178,19 +178,117 @@ class DocumentService:
         return None
 
     async def _extract_pdf_text(self, content: bytes) -> Optional[str]:
+        """
+        Extract text from a PDF.
+        1. Try PyPDF2 (fast, works on text-based PDFs).
+        2. If the result is too sparse (scanned/image PDF), fall back to
+           Gemini Vision — converts each page to an image and asks Gemini
+           to read the text.
+        """
+        # ── Step 1: PyPDF2 fast path ─────────────────────────────────────────
         try:
             from PyPDF2 import PdfReader
 
             reader = PdfReader(io.BytesIO(content))
             parts = []
-            for page in reader.pages:          # ALL pages, no limit
+            for page in reader.pages:
                 text = page.extract_text()
                 if text:
                     parts.append(text)
             result = "\n".join(parts).strip()
-            return result or None
+
+            # Heuristic: if we got at least 80 chars per page on average,
+            # the PDF has real selectable text — no OCR needed.
+            avg_chars = len(result) / max(len(reader.pages), 1)
+            if avg_chars >= 80:
+                logger.info(
+                    f"PDF: text-based ({len(result)} chars, "
+                    f"{avg_chars:.0f} avg/page) — PyPDF2 used"
+                )
+                return result
+            logger.info(
+                f"PDF: sparse text ({avg_chars:.0f} avg chars/page) "
+                f"— switching to Gemini Vision OCR"
+            )
         except Exception as e:
-            logger.warning(f"PDF extraction error: {e}")
+            logger.warning(f"PyPDF2 error: {e} — trying Gemini Vision")
+
+        # ── Step 2: Gemini Vision OCR fallback ──────────────────────────────
+        return await self._extract_pdf_with_vision(content)
+
+    async def _extract_pdf_with_vision(self, content: bytes) -> Optional[str]:
+        """
+        Convert each PDF page to an image and send it to Gemini Vision
+        to extract text (handles scanned PDFs and image-only PDFs).
+        """
+        try:
+            from pdf2image import convert_from_bytes
+            import base64
+            import requests as _requests
+
+            logger.info("Gemini Vision OCR: converting PDF pages to images…")
+            # 150 DPI is enough for OCR, keeps image size reasonable
+            images = convert_from_bytes(content, dpi=150)
+            logger.info(f"Gemini Vision OCR: {len(images)} page(s) to process")
+
+            all_text: list[str] = []
+            for page_num, image in enumerate(images, start=1):
+                try:
+                    # Convert PIL image → JPEG bytes → base64
+                    img_buffer = io.BytesIO()
+                    image.save(img_buffer, format="JPEG", quality=85)
+                    img_b64 = base64.b64encode(img_buffer.getvalue()).decode("utf-8")
+
+                    payload = {
+                        "contents": [{
+                            "parts": [
+                                {
+                                    "inline_data": {
+                                        "mime_type": "image/jpeg",
+                                        "data": img_b64,
+                                    }
+                                },
+                                {
+                                    "text": (
+                                        "Extract ALL text from this document image exactly as written. "
+                                        "Preserve the original structure — headings, paragraphs, lists, tables. "
+                                        "Output only the extracted text, nothing else."
+                                    )
+                                },
+                            ]
+                        }],
+                        "generationConfig": {"temperature": 0.0, "maxOutputTokens": 4096},
+                    }
+
+                    resp = _requests.post(
+                        f"https://generativelanguage.googleapis.com/v1beta/models/"
+                        f"gemini-2.0-flash:generateContent",
+                        params={"key": settings.GEMINI_API_KEY},
+                        json=payload,
+                        timeout=60,
+                    )
+                    resp.raise_for_status()
+                    page_text = (
+                        resp.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    )
+                    if page_text:
+                        all_text.append(f"[Page {page_num}]\n{page_text}")
+                    logger.info(f"Gemini Vision OCR: page {page_num} done ({len(page_text)} chars)")
+
+                except Exception as e:
+                    logger.warning(f"Gemini Vision OCR failed on page {page_num}: {e}")
+                    continue
+
+            result = "\n\n".join(all_text).strip()
+            if result:
+                logger.info(f"Gemini Vision OCR complete: {len(result)} total chars extracted")
+                return result
+
+            logger.warning("Gemini Vision OCR returned no text")
+            return None
+
+        except Exception as e:
+            logger.error(f"Gemini Vision OCR setup failed: {e}")
             return None
 
     async def _extract_docx_text(self, content: bytes) -> Optional[str]:

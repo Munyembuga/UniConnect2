@@ -1,0 +1,258 @@
+2026-05-21 08:28:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 08:28:47 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 08:30:25 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 08:30:25 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 08:30:55 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:30:57 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:30:59 | ERROR    | app.services.chat:ask_question:279 | Gemini generation failed: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+2026-05-21 08:36:35 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 08:36:35 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 08:37:36 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 08:37:36 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 08:38:10 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:38:14 | ERROR    | app.services.embeddings:_embed_with_gemini:99 | Gemini embedding error: HTTPSConnectionPool(host='generativelanguage.googleapis.com', port=443): Max retries exceeded with url: /v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g (Caused by NameResolutionError("HTTPSConnection(host='generativelanguage.googleapis.com', port=443): Failed to resolve 'generativelanguage.googleapis.com' ([Errno -5] No address associated with hostname)"))
+2026-05-21 08:38:14 | ERROR    | app.services.chat:ask_question:211 | Embedding failed: HTTPSConnectionPool(host='generativelanguage.googleapis.com', port=443): Max retries exceeded with url: /v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g (Caused by NameResolutionError("HTTPSConnection(host='generativelanguage.googleapis.com', port=443): Failed to resolve 'generativelanguage.googleapis.com' ([Errno -5] No address associated with hostname)"))
+2026-05-21 08:40:16 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:40:18 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:42:38 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 08:42:38 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 08:43:01 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:43:03 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:43:11 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:43:12 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:43:23 | ERROR    | app.services.chat:ask_question:302 | Gemini generation failed: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 08:44:15 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 08:44:15 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 08:44:57 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:44:59 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:45:50 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_CHAPTER 3 (1)_merged.pdf
+2026-05-21 08:45:52 | INFO     | app.repositories.document:create_document:48 | Document created: CHAPTER 3 (1)_merged.pdf (ID: 85661fad-69de-46f7-83ab-0ccf325309a7)
+2026-05-21 08:45:52 | INFO     | app.services.document:upload_document:76 | Document uploaded: CHAPTER 3 (1)_merged.pdf (ID: 85661fad-69de-46f7-83ab-0ccf325309a7, text_len=97169)
+2026-05-21 08:45:52 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: CHAPTER 3 (1)_merged.pdf — pipeline queued
+2026-05-21 08:45:52 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: processing
+2026-05-21 08:45:52 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 08:45:52 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 103 chunks for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 08:45:52 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:45:52 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:47:14 | ERROR    | app.services.embeddings:_embed_with_gemini:99 | Gemini embedding error: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 08:47:14 | ERROR    | app.services.document:process_document_pipeline:309 | Pipeline failed for document 85661fad-69de-46f7-83ab-0ccf325309a7: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 08:47:14 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: failed
+2026-05-21 08:48:15 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:48:16 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:50:12 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:50:14 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:51:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 08:51:47 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 08:52:08 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 08:52:10 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 08:52:11 | WARNING  | app.services.chat:_call_gemini:171 | Gemini 503 on gemini-2.5-flash — waiting 10s (attempt 1/2)
+2026-05-21 10:11:02 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:11:02 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:11:42 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:11:44 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:15:49 | INFO     | app.api.v1.processing:process_document:42 | Manual pipeline triggered for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:15:49 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: processing
+2026-05-21 10:15:49 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 10:15:49 | INFO     | app.repositories.document_chunk:delete_by_document:49 | Deleted 103 existing chunks for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:15:49 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 103 chunks for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:15:49 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:15:49 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:17:42 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 103 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-21 10:17:42 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: completed
+2026-05-21 10:17:42 | INFO     | app.services.document:process_document_pipeline:303 | Pipeline complete: document 85661fad-69de-46f7-83ab-0ccf325309a7, 103 chunks indexed
+2026-05-21 10:17:45 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:17:45 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:17:57 | INFO     | app.api.v1.processing:process_document:42 | Manual pipeline triggered for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:17:57 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: processing
+2026-05-21 10:17:57 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 10:17:57 | INFO     | app.repositories.document_chunk:delete_by_document:49 | Deleted 103 existing chunks for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:17:57 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 103 chunks for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:17:57 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:17:57 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:20:08 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 103 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-21 10:20:08 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:20:09 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:20:11 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: completed
+2026-05-21 10:20:11 | INFO     | app.services.document:process_document_pipeline:303 | Pipeline complete: document 85661fad-69de-46f7-83ab-0ccf325309a7, 103 chunks indexed
+2026-05-21 10:20:44 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_CHAPTER 3 (1)_merged.pdf
+2026-05-21 10:20:46 | INFO     | app.repositories.document:create_document:48 | Document created: CHAPTER 3 (1)_merged.pdf (ID: 1115076b-10e8-4ea9-909b-0f2654f8846e)
+2026-05-21 10:20:46 | INFO     | app.services.document:upload_document:76 | Document uploaded: CHAPTER 3 (1)_merged.pdf (ID: 1115076b-10e8-4ea9-909b-0f2654f8846e, text_len=97169)
+2026-05-21 10:20:46 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: CHAPTER 3 (1)_merged.pdf — pipeline queued
+2026-05-21 10:20:46 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 1115076b-10e8-4ea9-909b-0f2654f8846e, status: processing
+2026-05-21 10:20:46 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 10:20:46 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 103 chunks for document 1115076b-10e8-4ea9-909b-0f2654f8846e
+2026-05-21 10:20:46 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:20:46 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:22:50 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 103 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-21 10:22:50 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 1115076b-10e8-4ea9-909b-0f2654f8846e, status: completed
+2026-05-21 10:22:50 | INFO     | app.services.document:process_document_pipeline:303 | Pipeline complete: document 1115076b-10e8-4ea9-909b-0f2654f8846e, 103 chunks indexed
+2026-05-21 10:23:43 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_B251120140115K9WC.pdf
+2026-05-21 10:23:44 | INFO     | app.repositories.document:create_document:48 | Document created: B251120140115K9WC.pdf (ID: a746ed0e-332b-4191-9816-bd5a148af0bf)
+2026-05-21 10:23:44 | INFO     | app.services.document:upload_document:76 | Document uploaded: B251120140115K9WC.pdf (ID: a746ed0e-332b-4191-9816-bd5a148af0bf, text_len=714)
+2026-05-21 10:23:44 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: B251120140115K9WC.pdf — pipeline queued
+2026-05-21 10:23:44 | INFO     | app.repositories.document:update_document_status:109 | Document updated: a746ed0e-332b-4191-9816-bd5a148af0bf, status: processing
+2026-05-21 10:23:44 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 10:23:44 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 1 chunks for document a746ed0e-332b-4191-9816-bd5a148af0bf
+2026-05-21 10:23:44 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:23:44 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:23:45 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 1 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-21 10:23:45 | INFO     | app.repositories.document:update_document_status:109 | Document updated: a746ed0e-332b-4191-9816-bd5a148af0bf, status: completed
+2026-05-21 10:23:45 | INFO     | app.services.document:process_document_pipeline:303 | Pipeline complete: document a746ed0e-332b-4191-9816-bd5a148af0bf, 1 chunks indexed
+2026-05-21 10:25:11 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:25:12 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:32:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:32:47 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:33:04 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:33:05 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:33:27 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:33:27 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:34:57 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:34:58 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:35:42 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:35:43 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:35:54 | INFO     | app.api.v1.processing:process_document:42 | Manual pipeline triggered for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:35:54 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: processing
+2026-05-21 10:35:54 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 10:35:54 | INFO     | app.repositories.document_chunk:delete_by_document:49 | Deleted 103 existing chunks for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:35:54 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 103 chunks for document 85661fad-69de-46f7-83ab-0ccf325309a7
+2026-05-21 10:35:54 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:35:54 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:37:53 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 103 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-21 10:37:53 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:37:54 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:37:54 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=77%)
+2026-05-21 10:37:54 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:37:54 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 85661fad-69de-46f7-83ab-0ccf325309a7, status: completed
+2026-05-21 10:37:54 | INFO     | app.services.document:process_document_pipeline:303 | Pipeline complete: document 85661fad-69de-46f7-83ab-0ccf325309a7, 103 chunks indexed
+2026-05-21 10:37:54 | INFO     | app.services.chat:ask_question:294 | Keyword search: 1 chunks matched
+2026-05-21 10:37:54 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 5 chunks (vector=5, keyword=1)
+2026-05-21 10:38:45 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:38:46 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:38:46 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=67%)
+2026-05-21 10:38:46 | INFO     | app.services.chat:ask_question:294 | Keyword search: 0 chunks matched
+2026-05-21 10:38:46 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 2 chunks (vector=5, keyword=0)
+2026-05-21 10:39:32 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:39:33 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:39:33 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=77%)
+2026-05-21 10:39:33 | INFO     | app.services.chat:ask_question:294 | Keyword search: 1 chunks matched
+2026-05-21 10:39:33 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 5 chunks (vector=5, keyword=1)
+2026-05-21 10:41:48 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:41:48 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:42:17 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:42:17 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:43:47 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 10:43:47 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 10:44:16 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:44:18 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:44:18 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=77%)
+2026-05-21 10:44:18 | INFO     | app.services.chat:ask_question:294 | Keyword search: 1 chunks matched
+2026-05-21 10:44:18 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 5 chunks (vector=5, keyword=1)
+2026-05-21 10:45:45 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:45:46 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:45:46 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=71%)
+2026-05-21 10:45:46 | INFO     | app.services.chat:ask_question:294 | Keyword search: 0 chunks matched
+2026-05-21 10:45:46 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-21 10:46:09 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:46:10 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:46:10 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=65%)
+2026-05-21 10:46:10 | INFO     | app.services.chat:ask_question:294 | Keyword search: 4 chunks matched
+2026-05-21 10:46:10 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 5 chunks (vector=5, keyword=4)
+2026-05-21 10:50:41 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_merged1.pdf
+2026-05-21 10:50:42 | INFO     | app.repositories.document:create_document:48 | Document created: merged1.pdf (ID: 047778ea-5f9a-4603-b5cb-904344a99a63)
+2026-05-21 10:50:42 | INFO     | app.services.document:upload_document:76 | Document uploaded: merged1.pdf (ID: 047778ea-5f9a-4603-b5cb-904344a99a63, text_len=35230)
+2026-05-21 10:50:42 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: merged1.pdf — pipeline queued
+2026-05-21 10:50:42 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 047778ea-5f9a-4603-b5cb-904344a99a63, status: processing
+2026-05-21 10:50:42 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 10:50:42 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 40 chunks for document 047778ea-5f9a-4603-b5cb-904344a99a63
+2026-05-21 10:50:42 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:50:42 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:51:26 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 40 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-21 10:51:26 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 047778ea-5f9a-4603-b5cb-904344a99a63, status: completed
+2026-05-21 10:51:26 | INFO     | app.services.document:process_document_pipeline:303 | Pipeline complete: document 047778ea-5f9a-4603-b5cb-904344a99a63, 40 chunks indexed
+2026-05-21 10:51:57 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 10:51:58 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 10:51:58 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=68%)
+2026-05-21 10:51:58 | INFO     | app.services.chat:ask_question:294 | Keyword search: 0 chunks matched
+2026-05-21 10:51:58 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-21 10:54:20 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.pdf
+2026-05-21 10:54:20 | INFO     | app.repositories.document:create_document:48 | Document created: undergraduate_entry_requirements_2025_2026.pdf (ID: 8ba9b90b-4bca-428e-bbd0-84e0bc1a0fb7)
+2026-05-21 10:54:20 | INFO     | app.services.document:upload_document:76 | Document uploaded: undergraduate_entry_requirements_2025_2026.pdf (ID: 8ba9b90b-4bca-428e-bbd0-84e0bc1a0fb7, text_len=0)
+2026-05-21 10:54:20 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: undergraduate_entry_requirements_2025_2026.pdf — pipeline queued
+2026-05-21 10:54:20 | ERROR    | app.services.document:process_document_pipeline:251 | Pipeline: no extracted text for document 8ba9b90b-4bca-428e-bbd0-84e0bc1a0fb7
+2026-05-21 10:54:20 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 8ba9b90b-4bca-428e-bbd0-84e0bc1a0fb7, status: failed
+2026-05-21 11:00:32 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-21 11:00:32 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-21 11:04:01 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_undergraduate_entry_requirements_2025_2026.pdf
+2026-05-21 11:04:02 | INFO     | app.services.document:_extract_pdf_text:209 | PDF: sparse text (0 avg chars/page) — switching to Gemini Vision OCR
+2026-05-21 11:04:02 | INFO     | app.services.document:_extract_pdf_with_vision:229 | Gemini Vision OCR: converting PDF pages to images…
+2026-05-21 11:04:05 | INFO     | app.services.document:_extract_pdf_with_vision:232 | Gemini Vision OCR: 28 page(s) to process
+2026-05-21 11:04:06 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 1: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:08 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 2: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:09 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 3: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:11 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 4: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:13 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 5: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:14 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 6: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:15 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 7: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:16 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 8: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:17 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 9: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:18 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 10: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:19 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 11: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:21 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 12: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:23 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 13: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:24 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 14: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:25 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 15: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:27 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 16: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:28 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 17: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:29 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 18: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:30 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 19: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:31 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 20: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:31 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 21: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:32 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 22: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:34 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 23: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:35 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 24: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:36 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 25: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:37 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 26: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:38 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 27: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:40 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 28: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:04:40 | WARNING  | app.services.document:_extract_pdf_with_vision:287 | Gemini Vision OCR returned no text
+2026-05-21 11:04:40 | INFO     | app.repositories.document:create_document:48 | Document created: undergraduate_entry_requirements_2025_2026.pdf (ID: 7ffd0678-87b3-4fb1-bc94-e7c09540dfd3)
+2026-05-21 11:04:40 | INFO     | app.services.document:upload_document:76 | Document uploaded: undergraduate_entry_requirements_2025_2026.pdf (ID: 7ffd0678-87b3-4fb1-bc94-e7c09540dfd3, text_len=0)
+2026-05-21 11:04:40 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: undergraduate_entry_requirements_2025_2026.pdf — pipeline queued
+2026-05-21 11:04:40 | ERROR    | app.services.document:process_document_pipeline:349 | Pipeline: no extracted text for document 7ffd0678-87b3-4fb1-bc94-e7c09540dfd3
+2026-05-21 11:04:40 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 7ffd0678-87b3-4fb1-bc94-e7c09540dfd3, status: failed
+2026-05-21 11:05:16 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_academic_calendar_year_one_students.pdf
+2026-05-21 11:05:16 | INFO     | app.services.document:_extract_pdf_text:209 | PDF: sparse text (0 avg chars/page) — switching to Gemini Vision OCR
+2026-05-21 11:05:16 | INFO     | app.services.document:_extract_pdf_with_vision:229 | Gemini Vision OCR: converting PDF pages to images…
+2026-05-21 11:05:16 | INFO     | app.services.document:_extract_pdf_with_vision:232 | Gemini Vision OCR: 2 page(s) to process
+2026-05-21 11:05:17 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 1: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:05:18 | WARNING  | app.services.document:_extract_pdf_with_vision:279 | Gemini Vision OCR failed on page 2: 429 Client Error: Too Many Requests for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBLMn26oPy2xJlTveAVfaRyWP_1niaHZ3g
+2026-05-21 11:05:18 | WARNING  | app.services.document:_extract_pdf_with_vision:287 | Gemini Vision OCR returned no text
+2026-05-21 11:05:18 | INFO     | app.repositories.document:create_document:48 | Document created: academic_calendar_year_one_students.pdf (ID: 8fe1e2bb-2f57-489c-ad97-51fc2a8ee412)
+2026-05-21 11:05:18 | INFO     | app.services.document:upload_document:76 | Document uploaded: academic_calendar_year_one_students.pdf (ID: 8fe1e2bb-2f57-489c-ad97-51fc2a8ee412, text_len=0)
+2026-05-21 11:05:18 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: academic_calendar_year_one_students.pdf — pipeline queued
+2026-05-21 11:05:18 | ERROR    | app.services.document:process_document_pipeline:349 | Pipeline: no extracted text for document 8fe1e2bb-2f57-489c-ad97-51fc2a8ee412
+2026-05-21 11:05:18 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 8fe1e2bb-2f57-489c-ad97-51fc2a8ee412, status: failed
+2026-05-21 11:05:38 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/00000000-0000-0000-0000-000000000001/00000000-0000-0000-0000-000000000001_Golden_Treasure_Supply_Agreement.pdf
+2026-05-21 11:05:38 | INFO     | app.services.document:_extract_pdf_text:204 | PDF: text-based (6798 chars, 1700 avg/page) — PyPDF2 used
+2026-05-21 11:05:38 | INFO     | app.repositories.document:create_document:48 | Document created: Golden_Treasure_Supply_Agreement.pdf (ID: 2c639674-5648-4e2a-93e7-9b00dcee992e)
+2026-05-21 11:05:38 | INFO     | app.services.document:upload_document:76 | Document uploaded: Golden_Treasure_Supply_Agreement.pdf (ID: 2c639674-5648-4e2a-93e7-9b00dcee992e, text_len=6798)
+2026-05-21 11:05:38 | INFO     | app.api.v1.documents:upload_document:61 | Document uploaded: Golden_Treasure_Supply_Agreement.pdf — pipeline queued
+2026-05-21 11:05:38 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2c639674-5648-4e2a-93e7-9b00dcee992e, status: processing
+2026-05-21 11:05:38 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-21 11:05:38 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 7 chunks for document 2c639674-5648-4e2a-93e7-9b00dcee992e
+2026-05-21 11:05:38 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 11:05:39 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 11:05:47 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 7 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-21 11:05:47 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 2c639674-5648-4e2a-93e7-9b00dcee992e, status: completed
+2026-05-21 11:05:47 | INFO     | app.services.document:process_document_pipeline:401 | Pipeline complete: document 2c639674-5648-4e2a-93e7-9b00dcee992e, 7 chunks indexed
+2026-05-21 11:06:19 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 11:06:20 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 11:06:20 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=72%)
+2026-05-21 11:06:20 | INFO     | app.services.chat:ask_question:294 | Keyword search: 2 chunks matched
+2026-05-21 11:06:20 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 4 chunks (vector=5, keyword=2)
+2026-05-21 11:08:36 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-21 11:08:36 | INFO     | app.services.chromadb_client:_build_client:124 | ChromaDB: using PersistentClient at /app/chroma_db
+2026-05-21 11:08:36 | INFO     | app.services.chat:ask_question:273 | Vector search: 5 relevant chunks (best=72%)
+2026-05-21 11:08:36 | INFO     | app.services.chat:ask_question:294 | Keyword search: 1 chunks matched
+2026-05-21 11:08:36 | INFO     | app.services.chat:ask_question:316 | Hybrid search merged 3 chunks (vector=5, keyword=1)
+2026-05-21 11:08:37 | WARNING  | app.services.chat:_call_gemini:172 | Gemini 503 on gemini-2.5-flash — waiting 10s (attempt 1/2)

@@ -1,0 +1,25 @@
+# Environment files — never commit secrets
+.env
+*.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Uploads and vector data
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/chroma_db/*
+!backend/chroma_db/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
