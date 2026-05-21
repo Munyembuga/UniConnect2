@@ -77,27 +77,63 @@ class EmbeddingService:
 
     def _embed_with_gemini(self, texts: List[str], task_type: str) -> List[List[float]]:
         """
-        Call the Gemini v1 REST API directly (not the SDK) to avoid the v1beta
-        routing issue in google-generativeai 0.8.x.
+        Call the Gemini REST API for each text.
+        Retries on 429 rate-limit errors with exponential back-off.
+        Processes in batches of 10 with a 1-second pause between batches
+        to stay within free-tier limits.
         """
+        import time as _time
+
+        BATCH_SIZE = 10
+        MAX_RETRIES = 3
         embeddings = []
-        for text in texts:
-            try:
-                response = requests.post(
-                    _GEMINI_EMBED_URL,
-                    params={"key": settings.GEMINI_API_KEY},
-                    json={
-                        "model": _GEMINI_EMBED_MODEL,
-                        "content": {"parts": [{"text": text}]},
-                        "taskType": task_type,
-                    },
-                    timeout=30,
-                )
-                response.raise_for_status()
-                embeddings.append(response.json()["embedding"]["values"])
-            except Exception as e:
-                logger.error(f"Gemini embedding error: {e}")
-                raise
+
+        for batch_start in range(0, len(texts), BATCH_SIZE):
+            batch = texts[batch_start: batch_start + BATCH_SIZE]
+            for text in batch:
+                last_exc = None
+                for attempt in range(MAX_RETRIES):
+                    try:
+                        response = requests.post(
+                            _GEMINI_EMBED_URL,
+                            params={"key": settings.GEMINI_API_KEY},
+                            json={
+                                "model": _GEMINI_EMBED_MODEL,
+                                "content": {"parts": [{"text": text}]},
+                                "taskType": task_type,
+                            },
+                            timeout=30,
+                        )
+                        if response.status_code == 429:
+                            wait = 15 * (attempt + 1)
+                            try:
+                                for d in response.json().get("error", {}).get("details", []):
+                                    secs = (d.get("retryDelay") or "").replace("s", "")
+                                    if secs.isdigit():
+                                        wait = min(int(secs), 60)
+                                        break
+                            except Exception:
+                                pass
+                            logger.warning(
+                                f"Embedding 429 rate limit — waiting {wait}s "
+                                f"(attempt {attempt + 1}/{MAX_RETRIES})"
+                            )
+                            _time.sleep(wait)
+                            continue
+                        response.raise_for_status()
+                        embeddings.append(response.json()["embedding"]["values"])
+                        break
+                    except Exception as e:
+                        last_exc = e
+                        if attempt < MAX_RETRIES - 1:
+                            _time.sleep(5)
+                        else:
+                            logger.error(f"Gemini embedding error after {MAX_RETRIES} attempts: {e}")
+                            raise
+            # Brief pause between batches to respect rate limits
+            if batch_start + BATCH_SIZE < len(texts):
+                _time.sleep(1)
+
         return embeddings
 
     def _embed_with_openai(self, texts: List[str]) -> List[List[float]]:
