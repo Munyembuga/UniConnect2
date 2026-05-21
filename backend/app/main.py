@@ -11,10 +11,31 @@ from app.db.session import ping_database
 setup_logging()
 
 
+def _run_migrations() -> None:
+    """Run Alembic migrations on startup so the DB is always up to date."""
+    try:
+        from alembic.config import Config
+        from alembic import command
+        from pathlib import Path
+
+        alembic_cfg = Config(str(Path(__file__).resolve().parent.parent / "alembic.ini"))
+        alembic_cfg.set_main_option(
+            "script_location",
+            str(Path(__file__).resolve().parent.parent / "alembic"),
+        )
+        alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+        command.upgrade(alembic_cfg, "head")
+        logger.info("Alembic migrations applied successfully")
+    except Exception as e:
+        logger.warning(f"Alembic migration failed (non-fatal): {e}")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings.resolved_upload_dir.mkdir(parents=True, exist_ok=True)
     settings.resolved_chroma_dir.mkdir(parents=True, exist_ok=True)
+
+    _run_migrations()
 
     database_ready = await ping_database()
     if database_ready:
