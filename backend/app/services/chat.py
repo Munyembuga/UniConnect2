@@ -125,10 +125,15 @@ def _static_fallback(question: str, today: str) -> str:
 # Shared Gemini call with automatic 429 retry
 # ---------------------------------------------------------------------------
 
-_GEMINI_FALLBACK_MODELS = ["gemini-2.0-flash", "gemini-2.0-flash-lite"]
+_GEMINI_FALLBACK_MODELS = [
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite",
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-8b",
+]
 
 
-def _call_gemini(prompt: str, retries: int = 2) -> str:
+def _call_gemini(prompt: str, retries: int = 3) -> str:
     """
     Call Gemini generateContent via direct REST API (v1beta).
     Retries on 429 (rate limit) and 503 (overload), then falls back to
