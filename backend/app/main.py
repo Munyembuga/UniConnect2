@@ -11,23 +11,23 @@ from app.db.session import ping_database
 setup_logging()
 
 
-def _run_migrations() -> None:
-    """Run Alembic migrations on startup so the DB is always up to date."""
+async def _create_tables() -> None:
+    """Create all database tables if they don't exist yet."""
     try:
-        from alembic.config import Config
-        from alembic import command
-        from pathlib import Path
+        from app.db.database import engine
+        from app.db.base import Base
 
-        alembic_cfg = Config(str(Path(__file__).resolve().parent.parent / "alembic.ini"))
-        alembic_cfg.set_main_option(
-            "script_location",
-            str(Path(__file__).resolve().parent.parent / "alembic"),
-        )
-        alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
-        command.upgrade(alembic_cfg, "head")
-        logger.info("Alembic migrations applied successfully")
+        # Import all models so SQLAlchemy knows about them
+        import app.models.user               # noqa: F401
+        import app.models.document           # noqa: F401
+        import app.models.document_chunk     # noqa: F401
+        import app.models.chat_history       # noqa: F401
+
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database tables created / verified successfully")
     except Exception as e:
-        logger.warning(f"Alembic migration failed (non-fatal): {e}")
+        logger.warning(f"Table creation failed (non-fatal): {e}")
 
 
 @asynccontextmanager
@@ -35,7 +35,7 @@ async def lifespan(app: FastAPI):
     settings.resolved_upload_dir.mkdir(parents=True, exist_ok=True)
     settings.resolved_chroma_dir.mkdir(parents=True, exist_ok=True)
 
-    _run_migrations()
+    await _create_tables()
 
     database_ready = await ping_database()
     if database_ready:
