@@ -11,10 +11,10 @@ from loguru import logger
 from app.core.config import settings
 
 # Gemini v1beta REST endpoint — text-embedding-004 is broadly available on free-tier keys
-_GEMINI_EMBED_MODEL = "models/text-embedding-004"
+_GEMINI_EMBED_MODEL = "models/gemini-embedding-001"
 _GEMINI_EMBED_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
-    "text-embedding-004:embedContent"
+    "gemini-embedding-001:embedContent"
 )
 
 try:
