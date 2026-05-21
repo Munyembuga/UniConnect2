@@ -28,6 +28,18 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int = 5432
     DATABASE_URL: str = "postgresql+asyncpg://uniconnect:uniconnect_secret_2024@db:5432/uniconnect_db"
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def fix_database_url(cls, v: str) -> str:
+        """
+        Render (and many hosting providers) supply a DATABASE_URL that starts
+        with 'postgresql://' which maps to psycopg2 (not installed).
+        Auto-convert to 'postgresql+asyncpg://' so the async driver is used.
+        """
+        if isinstance(v, str) and v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
+
     # --- JWT Authentication ---
     JWT_SECRET_KEY: str = "change-me-in-production"
     JWT_REFRESH_SECRET_KEY: str = "change-me-in-production-refresh"
