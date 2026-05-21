@@ -10,11 +10,11 @@ from typing import List
 from loguru import logger
 from app.core.config import settings
 
-# Gemini v1beta REST endpoint — gemini-embedding-001 is the stable model for this key
-_GEMINI_EMBED_MODEL = "models/gemini-embedding-001"
+# Gemini v1beta REST endpoint — text-embedding-004 is broadly available on free-tier keys
+_GEMINI_EMBED_MODEL = "models/text-embedding-004"
 _GEMINI_EMBED_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-embedding-001:embedContent"
+    "text-embedding-004:embedContent"
 )
 
 try:
@@ -30,7 +30,7 @@ class EmbeddingService:
 
         if settings.GEMINI_API_KEY:
             self.provider = "genai"
-            logger.info("Embedding provider: Google Gemini (text-embedding-004 via REST v1)")
+            logger.info("Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)")
 
         elif OPENAI_AVAILABLE and getattr(settings, "OPENAI_API_KEY", None):
             import openai as _openai
