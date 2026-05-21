@@ -67,10 +67,11 @@ def _is_general_question(question: str) -> bool:
 
 def _answer_general_question(question: str) -> dict:
     """
-    Answer a conversational question directly with Gemini.
-    No embedding or ChromaDB lookup needed.
+    Answer a conversational question using static fallback first,
+    then try Gemini for a richer response if available.
     """
     today = date.today().strftime("%A, %B %d, %Y")
+    fallback = _static_fallback(question, today)
 
     prompt = (
         f"You are UniConnect, a friendly AI assistant for university students. "
@@ -85,14 +86,13 @@ def _answer_general_question(question: str) -> dict:
 
     try:
         return {
-            "answer": _call_gemini(prompt),
+            "answer": _call_gemini(prompt, retries=1),
             "sources": [],
             "confidence": 1.0,
             "error": None,
         }
     except Exception as e:
-        logger.error(f"General question Gemini call failed: {e}")
-        fallback = _static_fallback(question, today)
+        logger.warning(f"Gemini unavailable for general question, using static fallback: {e}")
         return {"answer": fallback, "sources": [], "confidence": 1.0, "error": None}
 
 
@@ -126,8 +126,8 @@ def _static_fallback(question: str, today: str) -> str:
 # ---------------------------------------------------------------------------
 
 _GEMINI_FALLBACK_MODELS = [
-    "gemini-2.0-flash",
     "gemini-2.0-flash-lite",
+    "gemini-2.0-flash",
     "gemini-1.5-flash",
     "gemini-1.5-flash-8b",
 ]
