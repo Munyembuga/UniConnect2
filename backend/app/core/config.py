@@ -47,9 +47,13 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # --- Gemini AI ---
+    # --- Gemini AI (embeddings) ---
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.0-flash"
+
+    # --- OpenAI (chat generation) ---
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
 
     # --- ChromaDB ---
     CHROMA_HOST: str = "chromadb"

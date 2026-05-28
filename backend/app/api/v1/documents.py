@@ -1,9 +1,9 @@
 """
 Document Upload API Router - v1
 
-AUTH MODE: DEV BYPASS (no token required — swap dependency to restore auth)
-  current: Depends(get_dev_user_id)
-  restore: Depends(get_current_user)
+Auth rules:
+  - Upload / List / Delete  → Admin only  (require_admin)
+  - Get document details    → Any authenticated user (get_current_user)
 """
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, UploadFile, File
@@ -12,8 +12,9 @@ from uuid import UUID
 from loguru import logger
 
 from app.db.session import get_db
+from app.core.deps import get_current_user, require_admin
+from app.models.user import User
 from app.services.document import DocumentService, process_document_pipeline
-from app.api.v1.dev_auth import get_dev_user_id          # ← DEV: swap for get_current_user to restore auth
 from app.schemas.document import (
     DocumentUploadResponse,
     DocumentListResponse,
@@ -34,33 +35,29 @@ async def get_document_service(db: AsyncSession = Depends(get_db)) -> DocumentSe
     "/upload",
     response_model=DocumentUploadResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Upload a document to the knowledge base",
+    summary="Upload a document to the knowledge base (Admin only)",
     description=(
-        "Upload a PDF, DOCX, or TXT file (max 50 MB). "
-        "Full text is extracted immediately and returned as `text_preview`. "
+        "**Admin only.** Upload a PDF, DOCX, or TXT file (max 50 MB). "
+        "Full text is extracted immediately. "
         "Chunking + embedding runs in the background. "
-        "Poll **GET /documents/{id}** until `is_processed == 'completed'` "
-        "before querying with **/chat/ask**."
+        "Poll **GET /documents/{id}** until `is_processed == 'completed'`."
     ),
 )
 async def upload_document(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(..., description="PDF, DOCX, or TXT file"),
-    current_user_id: UUID = Depends(get_dev_user_id),   # ← DEV bypass
+    admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
     document_service: DocumentService = Depends(get_document_service),
 ) -> DocumentUploadResponse:
     try:
         document, extracted_text = await document_service.upload_document(
-            user_id=current_user_id,
+            user_id=admin.id,
             file=file,
         )
-
-        # Trigger the chunk → embed → ChromaDB pipeline in the background
         background_tasks.add_task(process_document_pipeline, document.id)
-        logger.info(f"Document uploaded: {document.filename} — pipeline queued")
+        logger.info(f"Document uploaded by admin '{admin.email}': {document.filename}")
 
-        # Return first 500 chars of extracted text so you can verify extraction
         preview = extracted_text[:500].strip() if extracted_text else None
 
         return DocumentUploadResponse(
@@ -73,13 +70,10 @@ async def upload_document(
             created_at=document.created_at,
             text_preview=preview,
             message=(
-                "✓ Text extracted successfully. "
-                "Pipeline (chunk → embed) is running in the background. "
-                "Poll GET /documents/{id} until is_processed == 'completed', "
-                "then use POST /chat/ask to query the document."
+                "✓ Text extracted. Pipeline (chunk → embed) running in background. "
+                "Poll GET /documents/{id} until is_processed == 'completed'."
                 if preview
-                else
-                "⚠ Text extraction produced no content. Check the file format."
+                else "⚠ Text extraction produced no content. Check the file format."
             ),
         )
 
@@ -96,10 +90,10 @@ async def upload_document(
 @router.get(
     "",
     response_model=list[DocumentListResponse],
-    summary="List all documents",
+    summary="List all documents (Admin only)",
 )
 async def list_documents(
-    current_user_id: UUID = Depends(get_dev_user_id),   # ← DEV bypass
+    admin: User = Depends(require_admin),
     document_service: DocumentService = Depends(get_document_service),
 ) -> list[DocumentListResponse]:
     try:
@@ -128,11 +122,11 @@ async def list_documents(
     "/{document_id}",
     response_model=DocumentDetailResponse,
     summary="Get document details / check processing status",
-    description="Poll this endpoint until `is_processed` becomes `completed` or `failed`.",
+    description="Any authenticated user can poll this to check processing status.",
 )
 async def get_document(
     document_id: UUID,
-    current_user_id: UUID = Depends(get_dev_user_id),   # ← DEV bypass
+    current_user: User = Depends(get_current_user),
     document_service: DocumentService = Depends(get_document_service),
 ) -> DocumentDetailResponse:
     try:
@@ -164,15 +158,15 @@ async def get_document(
 @router.delete(
     "/{document_id}",
     response_model=DocumentDeleteResponse,
-    summary="Delete a document",
+    summary="Delete a document (Admin only)",
 )
 async def delete_document(
     document_id: UUID,
-    current_user_id: UUID = Depends(get_dev_user_id),   # ← DEV bypass
+    admin: User = Depends(require_admin),
     document_service: DocumentService = Depends(get_document_service),
 ) -> DocumentDeleteResponse:
     try:
-        success = await document_service.delete_document(document_id, current_user_id)
+        success = await document_service.delete_document(document_id, admin.id)
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
