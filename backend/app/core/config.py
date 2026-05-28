@@ -51,9 +51,6 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.0-flash"
 
-    # --- OpenAI (chat generation) ---
-    OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-4o-mini"
 
     # --- ChromaDB ---
     CHROMA_HOST: str = "chromadb"
