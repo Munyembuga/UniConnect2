@@ -1,0 +1,5 @@
+2026-05-26 14:18:00 | ERROR    | app.services.chat:ask_question:348 | Gemini generation failed: 429 {
+  "error": {
+    "code": 429,
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a
+2026-05-26 14:43:24 | ERROR    | app.services.document:process_document_pipeline:407 | Pipeline failed for document 5efe45d0-5480-4365-94ba-8fb91c85c2cc: Unequal lengths for fields: ids: 141, metadatas: 141, embeddings: 135, documents: 141 in upsert.

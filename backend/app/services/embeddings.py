@@ -33,15 +33,13 @@ class EmbeddingService:
             logger.info("Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)")
 
         elif OPENAI_AVAILABLE and getattr(settings, "OPENAI_API_KEY", None):
-            import openai as _openai
-            _openai.api_key = settings.OPENAI_API_KEY
             self.provider = "openai"
-            logger.info("Embedding provider: OpenAI")
+            logger.info("Embedding provider: OpenAI (text-embedding-3-small)")
 
         else:
             logger.warning(
-                "No embedding provider configured — set GEMINI_API_KEY or "
-                "OPENAI_API_KEY in .env. Embeddings will be unavailable."
+                "No embedding provider configured — set OPENAI_API_KEY or "
+                "GEMINI_API_KEY in .env. Embeddings will be unavailable."
             )
 
     def embed_texts(self, texts: List[str]) -> List[List[float]]:

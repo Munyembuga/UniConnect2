@@ -17,11 +17,11 @@ async def _create_tables() -> None:
         from app.db.database import engine
         from app.db.base import Base
 
-        # Import all models so SQLAlchemy knows about them
-        import app.models.user               # noqa: F401
-        import app.models.document           # noqa: F401
-        import app.models.document_chunk     # noqa: F401
-        import app.models.chat_history       # noqa: F401
+        import app.models.user                 # noqa: F401
+        import app.models.document             # noqa: F401
+        import app.models.document_chunk       # noqa: F401
+        import app.models.chat_history         # noqa: F401
+        import app.models.unresolved_question  # noqa: F401
 
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
@@ -30,12 +30,45 @@ async def _create_tables() -> None:
         logger.warning(f"Table creation failed (non-fatal): {e}")
 
 
+async def _seed_admin() -> None:
+    """Create the default admin account if it does not exist yet."""
+    ADMIN_EMAIL    = "admin@uniconnect.com"
+    ADMIN_PASSWORD = "Admin@1234"
+    ADMIN_NAME     = "UniConnect Admin"
+
+    try:
+        from app.db.database import AsyncSessionLocal
+        from app.models.user import User, UserRole
+        from app.core.security import hash_password
+        from sqlalchemy.future import select
+
+        async with AsyncSessionLocal() as db:
+            result = await db.execute(select(User).where(User.email == ADMIN_EMAIL))
+            if not result.scalar_one_or_none():
+                admin = User(
+                    email=ADMIN_EMAIL,
+                    full_name=ADMIN_NAME,
+                    hashed_password=hash_password(ADMIN_PASSWORD),
+                    role=UserRole.ADMIN,
+                    is_active=True,
+                    is_verified=True,
+                )
+                db.add(admin)
+                await db.commit()
+                logger.info(f"Default admin created: {ADMIN_EMAIL}")
+            else:
+                logger.info(f"Admin account already exists: {ADMIN_EMAIL}")
+    except Exception as e:
+        logger.warning(f"Admin seeding failed (non-fatal): {e}")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings.resolved_upload_dir.mkdir(parents=True, exist_ok=True)
     settings.resolved_chroma_dir.mkdir(parents=True, exist_ok=True)
 
     await _create_tables()
+    await _seed_admin()
 
     database_ready = await ping_database()
     if database_ready:
@@ -51,18 +84,20 @@ app = FastAPI(
     version=settings.APP_VERSION,
     description=(
         "## UniConnect — AI Student Support Chatbot\n\n"
-        "> **DEV / TESTING MODE** — No authentication required. "
-        "All endpoints work directly without tokens or login.\n\n"
-        "### Quick test flow\n"
-        "1. **Upload a document** → `POST /api/v1/documents/upload` "
-        "(attach a PDF, DOCX, or TXT file). "
-        "The response includes `text_preview` (first 500 chars) to confirm extraction.\n"
-        "2. **Poll until processed** → `GET /api/v1/documents/{id}` "
-        "until `is_processed` is `completed`.\n"
-        "3. **Ask a question** → `POST /api/v1/chat/ask` with "
-        "`{\"question\": \"...\"}`. Returns an AI-generated answer, "
-        "source passages, and a confidence score.\n\n"
-        "No `Authorization` header needed anywhere."
+        "### Authentication\n"
+        "1. **Register** → `POST /api/v1/auth/register`\n"
+        "2. **Login** → `POST /api/v1/auth/login` — copy the `access_token`\n"
+        "3. Click **Authorize** (🔒) and enter: `Bearer <access_token>`\n\n"
+        "### Roles\n"
+        "| Role | Permissions |\n"
+        "|------|-------------|\n"
+        "| **Admin** | Upload/list/delete documents, view all chat history, answer unresolved questions |\n"
+        "| **Student** | Ask questions, view own chat history |\n\n"
+        "### Flow\n"
+        "1. Admin uploads a document → background pipeline chunks + embeds it\n"
+        "2. Students ask questions → AI searches the knowledge base\n"
+        "3. Low-confidence answers are flagged for admin review\n"
+        "4. Admin answers flagged questions → next student with the same question gets the admin answer\n"
     ),
     docs_url="/docs",
     redoc_url="/redoc",

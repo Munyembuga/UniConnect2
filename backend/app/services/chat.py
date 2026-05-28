@@ -1,20 +1,25 @@
 """
 Chat / Q&A service.
 
-Flow:
-  1. Detect if the question is general/conversational (greetings, identity, date, etc.)
-     → answer directly with Gemini, no RAG needed.
-  2. Otherwise run the full Hybrid RAG pipeline:
+Flow for every question:
+  0. Check if an admin has already answered a similar question → return admin answer.
+  1. Detect general/conversational questions → answer directly (no RAG needed).
+  2. Hybrid RAG pipeline:
        a. Vector search  — embed question → ChromaDB semantic search
        b. Keyword search — PostgreSQL full-text search (tsvector/tsquery)
        c. RRF merge      — Reciprocal Rank Fusion combines both result lists
-       d. Gemini         — generates grounded answer from merged top chunks
+       d. OpenAI GPT-4o mini (or Gemini fallback) — generates grounded answer
+  3. Save result to chat_history.
+  4. If confidence is low or no answer found → flag as unresolved question for admin.
 """
 import re
 import time
 from datetime import date
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
+from uuid import UUID
 from loguru import logger
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.services.embeddings import EmbeddingService
@@ -25,34 +30,25 @@ from app.services.chromadb_client import ChromaClient
 # General-question detection
 # ---------------------------------------------------------------------------
 
-# Patterns that classify a question as general/conversational.
-# Checked against the lowercased, stripped question text.
 _GENERAL_PATTERNS = [
-    # greetings
     r"^(hi|hello|hey|hiya|howdy|greetings|yo)\b",
     r"^(good\s+(morning|afternoon|evening|night|day))\b",
-    # farewells
     r"^(bye|goodbye|see\s+you|take\s+care|cya|see\s+ya)\b",
-    # well-being
     r"\bhow\s+are\s+you\b",
     r"\bhow'?s\s+it\s+going\b",
     r"\bhow\s+do\s+you\s+do\b",
     r"\bare\s+you\s+(ok|okay|doing\s+well|fine|good)\b",
-    # identity / capability
     r"\bwho\s+are\s+you\b",
     r"\bwhat\s+(is\s+)?your\s+name\b",
     r"\bwhat\s+are\s+you\b",
     r"\bwhat\s+can\s+you\s+do\b",
     r"\btell\s+me\s+about\s+yourself\b",
-    # date / time
     r"\bwhat\s+(is\s+|'?s\s+)?(today'?s?\s+)?date\b",
     r"\bwhat\s+day\s+is\s+(it|today)\b",
     r"\bwhat\s+time\s+is\s+it\b",
     r"\bcurrent\s+(date|time|day)\b",
     r"\btoday'?s?\s+date\b",
-    # thanks
     r"^(thanks|thank\s+you|thank\s+u|thx|cheers|appreciated)\b",
-    # help
     r"^help$",
     r"\bwhat\s+can\s+you\s+help\b",
 ]
@@ -60,16 +56,36 @@ _GENERAL_RE = [re.compile(p, re.IGNORECASE) for p in _GENERAL_PATTERNS]
 
 
 def _is_general_question(question: str) -> bool:
-    """Return True if the question is conversational and needs no knowledge base."""
     q = question.strip()
     return any(rx.search(q) for rx in _GENERAL_RE)
 
 
+def _static_fallback(question: str, today: str) -> str:
+    """Canned answer when all AI providers are unreachable."""
+    q = question.lower()
+    if any(w in q for w in ["date", "day", "time"]):
+        return f"Today is {today}."
+    if any(w in q for w in ["who are you", "your name", "what are you"]):
+        return (
+            "I'm UniConnect, an AI assistant that helps university students "
+            "find answers in uploaded documents and handles general questions."
+        )
+    if any(w in q for w in ["what can you do", "how can you help", "what do you do"]):
+        return (
+            "I can help you in two ways: "
+            "(1) answer questions about documents uploaded to the knowledge base, and "
+            "(2) handle general questions like greetings, today's date, or who I am. "
+            "Ask me anything about your university documents!"
+        )
+    if any(w in q for w in ["bye", "goodbye"]):
+        return "Goodbye! Feel free to come back whenever you have more questions."
+    if any(w in q for w in ["thank"]):
+        return "You're welcome! Let me know if there's anything else I can help with."
+    return "Hello! I'm UniConnect, your university AI assistant. How can I help you today?"
+
+
 def _answer_general_question(question: str) -> dict:
-    """
-    Answer a conversational question using static fallback first,
-    then try Gemini for a richer response if available.
-    """
+    """Answer a conversational question — tries OpenAI then Gemini, falls back to static."""
     today = date.today().strftime("%A, %B %d, %Y")
     fallback = _static_fallback(question, today)
 
@@ -83,47 +99,39 @@ def _answer_general_question(question: str) -> dict:
         f"If asked what you can do, briefly describe: answer questions from uploaded documents, "
         f"provide the current date, and handle general conversation."
     )
-
     try:
         return {
-            "answer": _call_gemini(prompt, retries=1),
+            "answer": _call_ai(prompt),
             "sources": [],
             "confidence": 1.0,
             "error": None,
+            "answered_by": "ai",
         }
     except Exception as e:
-        logger.warning(f"Gemini unavailable for general question, using static fallback: {e}")
-        return {"answer": fallback, "sources": [], "confidence": 1.0, "error": None}
-
-
-def _static_fallback(question: str, today: str) -> str:
-    """Return a canned answer when Gemini is unreachable."""
-    q = question.lower()
-    if any(w in q for w in ["date", "day", "time"]):
-        return f"Today is {today}."
-    if any(w in q for w in ["who are you", "your name", "what are you"]):
-        return (
-            "I'm UniConnect, an AI assistant that helps university students "
-            "find answers in uploaded documents and handles general questions."
-        )
-    if any(w in q for w in ["what can you do", "how can you help", "what do you do"]):
-        return (
-            "I can help you in two ways: "
-            "(1) answer questions about documents you upload to the knowledge base, and "
-            "(2) handle general questions like greetings, today's date, or information about me. "
-            "Upload a PDF, DOCX, or TXT file and then ask me anything about it!"
-        )
-    if any(w in q for w in ["bye", "goodbye"]):
-        return "Goodbye! Feel free to come back whenever you have more questions."
-    if any(w in q for w in ["thank"]):
-        return "You're welcome! Let me know if there's anything else I can help with."
-    # default greeting
-    return "Hello! I'm UniConnect, your university AI assistant. How can I help you today?"
+        logger.warning(f"AI unavailable for general question, using static fallback: {e}")
+        return {"answer": fallback, "sources": [], "confidence": 1.0, "error": None, "answered_by": "static"}
 
 
 # ---------------------------------------------------------------------------
-# Shared Gemini call with automatic 429 retry
+# AI generation — tries OpenAI first, falls back to Gemini
 # ---------------------------------------------------------------------------
+
+def _call_openai(prompt: str) -> str:
+    """Call OpenAI chat completions using gpt-4o-mini."""
+    import openai as _openai
+
+    if not settings.OPENAI_API_KEY:
+        raise RuntimeError("OPENAI_API_KEY is not configured")
+
+    client = _openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+    response = client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2,
+        max_tokens=512,
+    )
+    return response.choices[0].message.content.strip()
+
 
 _GEMINI_FALLBACK_MODELS = [
     "gemini-2.0-flash-lite",
@@ -155,46 +163,37 @@ def _call_gemini(prompt: str, retries: int = 3) -> str:
             f"https://generativelanguage.googleapis.com/v1beta/models/"
             f"{model}:generateContent"
         )
-        for attempt in range(retries + 1):
-            try:
-                resp = _requests.post(
-                    url,
-                    params={"key": settings.GEMINI_API_KEY},
-                    json=payload,
-                    timeout=60,
-                )
-                if resp.status_code in (429, 503):
-                    if attempt < retries:
-                        wait = 10 if resp.status_code == 503 else 15
-                        try:
-                            for d in resp.json().get("error", {}).get("details", []):
-                                secs = (d.get("retryDelay") or "").replace("s", "")
-                                if secs.isdigit():
-                                    wait = min(int(secs), 60)
-                                    break
-                        except Exception:
-                            pass
-                        logger.warning(
-                            f"Gemini {resp.status_code} on {model} — "
-                            f"waiting {wait}s (attempt {attempt + 1}/{retries})"
-                        )
-                        time.sleep(wait)
-                        continue
-                    # exhausted retries on this model — try next
-                    last_exc = Exception(f"{resp.status_code} {resp.text[:200]}")
-                    break
-                resp.raise_for_status()
-                data = resp.json()
-                if model != settings.GEMINI_MODEL:
-                    logger.info(f"Used fallback model: {model}")
-                return data["candidates"][0]["content"]["parts"][0]["text"].strip()
-            except Exception as e:
-                last_exc = e
-                if attempt < retries:
-                    time.sleep(5)
-                    continue
-                break  # try next model
+        try:
+            resp = _requests.post(
+                url,
+                params={"key": settings.GEMINI_API_KEY},
+                json=payload,
+                timeout=60,
+            )
+            if resp.status_code in (429, 503):
+                last_exc = Exception(f"{resp.status_code} {resp.text[:200]}")
+                logger.warning(f"Gemini {resp.status_code} on {model} — trying next model")
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+            if model != settings.GEMINI_MODEL:
+                logger.info(f"Used fallback model: {model}")
+            return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        except Exception as e:
+            last_exc = e
+            continue
+
     raise last_exc or RuntimeError("All Gemini models failed")
+
+
+def _call_ai(prompt: str) -> str:
+    """Try OpenAI first; fall back to Gemini if OpenAI fails."""
+    if settings.OPENAI_API_KEY:
+        try:
+            return _call_openai(prompt)
+        except Exception as e:
+            logger.warning(f"OpenAI failed ({e}), falling back to Gemini")
+    return _call_gemini(prompt)
 
 
 # ---------------------------------------------------------------------------
@@ -207,28 +206,11 @@ def _reciprocal_rank_fusion(
     k: int = 60,
     top_n: int = 5,
 ) -> List[str]:
-    """
-    Merge vector-search results and keyword-search results into one ranked list.
-
-    RRF score for a document = Σ  1 / (k + rank_in_source)
-
-    A document appearing in both sources scores higher than one appearing
-    in only one — naturally rewarding overlap between semantic and lexical matches.
-
-    Args:
-        vector_docs:   Ordered list of chunk texts from ChromaDB (index 0 = best).
-        keyword_docs:  List of (chunk_text, bm25_score) from PostgreSQL FTS.
-        k:             RRF constant (default 60 per the original paper).
-        top_n:         How many merged results to return.
-    """
     scores: Dict[str, float] = {}
-
     for rank, doc in enumerate(vector_docs):
         scores[doc] = scores.get(doc, 0.0) + 1.0 / (k + rank + 1)
-
     for rank, (doc, _) in enumerate(keyword_docs):
         scores[doc] = scores.get(doc, 0.0) + 1.0 / (k + rank + 1)
-
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     return [doc for doc, _ in ranked[:top_n]]
 
@@ -237,19 +219,67 @@ def _reciprocal_rank_fusion(
 # Main entry point
 # ---------------------------------------------------------------------------
 
-async def ask_question(question: str) -> dict:
+async def ask_question(
+    question: str,
+    user_id: UUID,
+    db: AsyncSession,
+) -> dict:
     """
-    Route the question:
-      • general / conversational  → direct Gemini answer
-      • knowledge-base question   → Hybrid RAG (vector + keyword, merged via RRF)
-    """
+    Route the question through the full pipeline and save results.
 
-    # ── 0. General question shortcut ────────────────────────────────────────
+    Args:
+        question:  The student's question.
+        user_id:   ID of the authenticated user asking the question.
+        db:        Async DB session (used for chat history + unresolved questions).
+
+    Returns:
+        dict with keys: answer, sources, confidence, error, answered_by
+    """
+    from app.repositories.chat_history import ChatHistoryRepository
+    from app.repositories.unresolved_question import UnresolvedQuestionRepository
+
+    ch_repo = ChatHistoryRepository(db)
+    uq_repo = UnresolvedQuestionRepository(db)
+
+    # ── 0. Check admin-answered questions ────────────────────────────────────
+    try:
+        admin_match = await uq_repo.find_answered_similar(question)
+    except Exception:
+        admin_match = None
+
+    if admin_match:
+        logger.info(f"Returning admin answer for: '{question[:60]}'")
+        await ch_repo.create(
+            user_id=user_id,
+            question=question,
+            answer=admin_match.admin_answer,
+            sources=[],
+            confidence_score=1.0,
+            is_resolved="resolved",
+        )
+        return {
+            "answer": admin_match.admin_answer,
+            "sources": [],
+            "confidence": 1.0,
+            "error": None,
+            "answered_by": "admin",
+        }
+
+    # ── 1. General question shortcut ─────────────────────────────────────────
     if _is_general_question(question):
         logger.info(f"General question detected, skipping RAG: '{question[:60]}'")
-        return _answer_general_question(question)
+        result = _answer_general_question(question)
+        await ch_repo.create(
+            user_id=user_id,
+            question=question,
+            answer=result["answer"],
+            sources=[],
+            confidence_score=1.0,
+            is_resolved="resolved",
+        )
+        return result
 
-    # ── 1. Vector search (ChromaDB) ──────────────────────────────────────────
+    # ── 2. Vector search (ChromaDB) ──────────────────────────────────────────
     vector_docs: List[str] = []
     best_similarity: float = 0.0
 
@@ -280,87 +310,124 @@ async def ask_question(question: str) -> dict:
     except RuntimeError:
         return {
             "answer": None, "sources": [], "confidence": 0.0,
-            "error": "Embedding service not configured. Add GEMINI_API_KEY and restart.",
+            "error": "Embedding service not configured. Add GEMINI_API_KEY or OPENAI_API_KEY and restart.",
+            "answered_by": "error",
         }
     except Exception as e:
         logger.warning(f"Vector search failed: {e} — falling back to keyword only")
 
-    # ── 2. Keyword search (PostgreSQL full-text) ─────────────────────────────
+    # ── 3. Keyword search (PostgreSQL full-text) ─────────────────────────────
     keyword_results: List[Tuple[str, float]] = []
-
     try:
-        from app.db.database import AsyncSessionLocal
         from app.repositories.document_chunk import DocumentChunkRepository
-
-        async with AsyncSessionLocal() as db:
-            chunk_repo = DocumentChunkRepository(db)
-            raw = await chunk_repo.keyword_search(question, top_k=settings.SIMILARITY_TOP_K)
-            keyword_results = [(chunk.content, score) for chunk, score in raw]
+        chunk_repo = DocumentChunkRepository(db)
+        raw = await chunk_repo.keyword_search(question, top_k=settings.SIMILARITY_TOP_K)
+        keyword_results = [(chunk.content, score) for chunk, score in raw]
         logger.info(f"Keyword search: {len(keyword_results)} chunks matched")
-
     except Exception as e:
         logger.warning(f"Keyword search failed: {e} — using vector results only")
 
-    # ── 3. Check we have something ───────────────────────────────────────────
+    # ── 4. Check we have context ─────────────────────────────────────────────
     if not vector_docs and not keyword_results:
+        no_answer = (
+            "No relevant content found in the knowledge base. "
+            "Please make sure a document has been uploaded and fully processed."
+        )
+        chat = await ch_repo.create(
+            user_id=user_id,
+            question=question,
+            answer=no_answer,
+            sources=[],
+            confidence_score=best_similarity,
+            is_resolved="unresolved",
+        )
+        await uq_repo.create(
+            chat_history_id=chat.id,
+            user_id=user_id,
+            question=question,
+            ai_attempt=no_answer,
+            confidence_score=best_similarity,
+        )
         return {
-            "answer": (
-                "No relevant content found. Make sure at least one document is fully "
-                "processed (is_processed == 'completed'), then try again."
-            ),
+            "answer": no_answer,
             "sources": [], "confidence": best_similarity, "error": None,
+            "answered_by": "system",
         }
 
-    # ── 4. Merge with Reciprocal Rank Fusion ─────────────────────────────────
+    # ── 5. Merge with RRF ────────────────────────────────────────────────────
     merged = _reciprocal_rank_fusion(vector_docs, keyword_results, top_n=5)
-
-    # If RRF returned nothing (edge case), fall back to whichever list has data
     if not merged:
         merged = vector_docs[:5] or [doc for doc, _ in keyword_results[:5]]
-
     logger.info(
         f"Hybrid search merged {len(merged)} chunks "
         f"(vector={len(vector_docs)}, keyword={len(keyword_results)})"
     )
 
-    # ── 5. Build prompt & call Gemini ─────────────────────────────────────────
+    # ── 6. Build prompt & call AI ─────────────────────────────────────────────
     context_text = "\n\n---\n\n".join(merged)
-
     prompt = (
         "You are a strict document-based AI assistant.\n\n"
         "Answer questions using ONLY the context provided. Never use outside knowledge.\n\n"
-        "## ANSWER LENGTH RULES (follow strictly):\n"
-        "- Single value (ID, number, name, date, price) → ONE short sentence only.\n"
-        "  Example: 'The National ID is 1200580041943090.'\n"
+        "## ANSWER LENGTH RULES:\n"
+        "- Single value (ID, number, name, date) → ONE short sentence only.\n"
         "- Factual question → 1–2 sentences maximum.\n"
         "- List/explain question → 3–5 bullet points, one line each.\n"
-        "- NEVER write more than is needed to answer the question.\n\n"
+        "- NEVER write more than is needed.\n\n"
         "## OTHER RULES:\n"
         "- Use ONLY the relevant part of the context. Ignore unrelated text.\n"
         "- Do NOT copy large chunks of text from the context.\n"
-        "- Do NOT repeat the question or add preamble like 'Based on the document...'.\n"
-        "- If the answer is not in the context: 'I could not find the exact answer in the document.'\n"
-        "- If the question is unclear: ask one clarification question.\n\n"
-        "## CONTEXT:\n"
-        f"{context_text}\n\n"
+        "- Do NOT repeat the question or add preamble.\n"
+        "- If the answer is not in the context: reply exactly: "
+        "'I could not find the exact answer in the document.'\n\n"
+        f"## CONTEXT:\n{context_text}\n\n"
         f"## QUESTION:\n{question}\n\n"
         "## ANSWER (be as short as possible):"
     )
 
+    answer: Optional[str] = None
+    ai_error: Optional[str] = None
     try:
-        answer = _call_gemini(prompt)
+        answer = _call_ai(prompt)
     except Exception as e:
-        logger.error(f"Gemini generation failed: {e}")
-        return {
-            "answer": None,
-            "sources": merged[:3],
-            "confidence": best_similarity,
-            "error": f"AI generation failed: {e}",
-        }
+        logger.error(f"AI generation failed: {e}")
+        ai_error = f"AI generation failed: {e}"
+
+    # ── 7. Determine resolution status ───────────────────────────────────────
+    is_unresolved = (
+        answer is None
+        or best_similarity < settings.CONFIDENCE_THRESHOLD
+        or (answer and "could not find" in answer.lower())
+    )
+    is_resolved = "unresolved" if is_unresolved else "resolved"
+
+    # ── 8. Save to chat history ───────────────────────────────────────────────
+    chat = await ch_repo.create(
+        user_id=user_id,
+        question=question,
+        answer=answer,
+        sources=merged[:3],
+        confidence_score=best_similarity,
+        is_resolved=is_resolved,
+    )
+
+    # ── 9. Flag as unresolved if needed ──────────────────────────────────────
+    if is_unresolved:
+        try:
+            await uq_repo.create(
+                chat_history_id=chat.id,
+                user_id=user_id,
+                question=question,
+                ai_attempt=answer,
+                confidence_score=best_similarity,
+            )
+            logger.info(f"Question flagged as unresolved for admin review: '{question[:60]}'")
+        except Exception as e:
+            logger.warning(f"Failed to save unresolved question: {e}")
 
     return {
         "answer": answer,
         "sources": merged[:3],
         "confidence": best_similarity,
-        "error": None,
+        "error": ai_error,
+        "answered_by": "ai",
     }

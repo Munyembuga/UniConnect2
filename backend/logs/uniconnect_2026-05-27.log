@@ -1,0 +1,131 @@
+2026-05-27 17:32:37 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:32:37 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:39:36 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:39:36 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:39:58 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:39:58 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:40:16 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:40:16 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:40:37 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:40:37 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:40:57 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:40:57 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:42:17 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:42:17 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:42:41 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:42:41 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:43:08 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:43:08 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:43:18 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:43:19 | INFO     | app.main:lifespan:21 | Database connection check passed
+2026-05-27 17:43:58 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:43:59 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-27 17:43:59 | INFO     | app.main:lifespan:42 | Database connection check passed
+2026-05-27 17:44:17 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:44:17 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-27 17:44:17 | INFO     | app.main:lifespan:42 | Database connection check passed
+2026-05-27 17:45:58 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:45:59 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-27 17:45:59 | INFO     | app.main:lifespan:74 | Database connection check passed
+2026-05-27 17:46:09 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:46:09 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-27 17:46:09 | INFO     | app.main:_seed_admin:58 | Default admin created: admin@uniconnect.com
+2026-05-27 17:46:09 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-27 17:46:19 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:46:20 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-27 17:46:20 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-27 17:46:20 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-27 17:47:27 | INFO     | app.repositories.user:update_user:132 | User updated: admin@uniconnect.com
+2026-05-27 17:47:27 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@uniconnect.com
+2026-05-27 17:49:44 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-27 17:49:44 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-27 17:49:44 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-27 17:49:44 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-27 17:50:54 | WARNING  | app.core.security:decode_access_token:95 | Access token decode failed: Invalid header string: 'utf-8' codec can't decode byte 0xa9 in position 1: invalid start byte
+2026-05-27 17:50:54 | WARNING  | app.core.security:decode_access_token:95 | Access token decode failed: Invalid header string: 'utf-8' codec can't decode byte 0xa9 in position 1: invalid start byte
+2026-05-27 17:52:12 | INFO     | app.repositories.user:update_user:132 | User updated: admin@uniconnect.com
+2026-05-27 17:52:12 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@uniconnect.com
+2026-05-27 17:52:56 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/c20ce78f-cd30-4e44-a9ed-b32ef354561a/c20ce78f-cd30-4e44-a9ed-b32ef354561a_Environmental Monitoring and Audit.pdf
+2026-05-27 17:52:56 | INFO     | app.services.document:_extract_pdf_text:204 | PDF: text-based (31301 chars, 2236 avg/page) — PyPDF2 used
+2026-05-27 17:52:56 | INFO     | app.repositories.document:create_document:48 | Document created: Environmental Monitoring and Audit.pdf (ID: fff91c9b-8621-401e-a082-1502ac68be04)
+2026-05-27 17:52:56 | INFO     | app.services.document:upload_document:76 | Document uploaded: Environmental Monitoring and Audit.pdf (ID: fff91c9b-8621-401e-a082-1502ac68be04, text_len=31301)
+2026-05-27 17:52:56 | INFO     | app.api.v1.documents:upload_document:59 | Document uploaded by admin 'admin@uniconnect.com': Environmental Monitoring and Audit.pdf
+2026-05-27 17:52:56 | INFO     | app.repositories.document:update_document_status:109 | Document updated: fff91c9b-8621-401e-a082-1502ac68be04, status: processing
+2026-05-27 17:52:56 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-27 17:52:56 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 34 chunks for document fff91c9b-8621-401e-a082-1502ac68be04
+2026-05-27 17:52:56 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-27 17:52:57 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-27 17:54:01 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 34 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-27 17:54:01 | INFO     | app.repositories.document:update_document_status:109 | Document updated: fff91c9b-8621-401e-a082-1502ac68be04, status: completed
+2026-05-27 17:54:01 | INFO     | app.services.document:process_document_pipeline:401 | Pipeline complete: document fff91c9b-8621-401e-a082-1502ac68be04, 34 chunks indexed
+2026-05-27 17:54:48 | INFO     | app.services.chat:ask_question:240 | General question detected, skipping RAG: 'hello?'
+2026-05-27 17:54:49 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-27 17:54:51 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-27 17:54:54 | WARNING  | app.services.chat:_answer_general_question:109 | Gemini unavailable for general question, using static fallback: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-27 17:54:54 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-27 17:55:34 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-27 17:55:36 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-27 17:55:36 | INFO     | app.services.chat:ask_question:278 | Vector search: 5 relevant chunks (best=69%)
+2026-05-27 17:55:36 | INFO     | app.services.chat:ask_question:296 | Keyword search: 0 chunks matched
+2026-05-27 17:55:36 | INFO     | app.services.chat:ask_question:331 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-27 17:55:38 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-27 17:55:39 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-27 17:55:42 | ERROR    | app.services.chat:ask_question:362 | Gemini generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-27 17:55:42 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-27 17:55:42 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'Five key environmental aspects reviewed during an environmen'
+2026-05-27 17:55:42 | INFO     | app.services.chat:ask_question:393 | Question flagged as unresolved for admin review: 'Five key environmental aspects reviewed during an environmen'
+2026-05-27 17:58:02 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-27 17:58:04 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-27 17:58:04 | INFO     | app.services.chat:ask_question:278 | Vector search: 5 relevant chunks (best=67%)
+2026-05-27 17:58:04 | INFO     | app.services.chat:ask_question:296 | Keyword search: 0 chunks matched
+2026-05-27 17:58:04 | INFO     | app.services.chat:ask_question:331 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-27 17:58:05 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-27 17:58:06 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-27 17:58:07 | ERROR    | app.services.chat:ask_question:362 | Gemini generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-27 17:58:07 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-27 17:58:07 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'what are the two parties who made a contract?'
+2026-05-27 17:58:07 | INFO     | app.services.chat:ask_question:393 | Question flagged as unresolved for admin review: 'what are the two parties who made a contract?'
+2026-05-27 17:59:58 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-27 17:59:59 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-27 17:59:59 | INFO     | app.services.chat:ask_question:278 | Vector search: 5 relevant chunks (best=78%)
+2026-05-27 17:59:59 | INFO     | app.services.chat:ask_question:296 | Keyword search: 0 chunks matched
+2026-05-27 17:59:59 | INFO     | app.services.chat:ask_question:331 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-27 18:00:00 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-27 18:00:00 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-27 18:00:00 | ERROR    | app.services.chat:ask_question:362 | Gemini generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-27 18:00:00 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-27 18:00:00 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'what quantity of pork will be supplied per collection accord'
+2026-05-27 18:00:00 | INFO     | app.services.chat:ask_question:393 | Question flagged as unresolved for admin review: 'what quantity of pork will be supplied per collection accord'
+2026-05-27 18:01:11 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-27 18:01:12 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-27 18:01:12 | INFO     | app.services.chat:ask_question:278 | Vector search: 5 relevant chunks (best=62%)
+2026-05-27 18:01:12 | INFO     | app.services.chat:ask_question:296 | Keyword search: 0 chunks matched
+2026-05-27 18:01:12 | INFO     | app.services.chat:ask_question:331 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-27 18:01:13 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-27 18:01:14 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-27 18:01:16 | ERROR    | app.services.chat:ask_question:362 | Gemini generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-27 18:01:16 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-27 18:01:16 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'what is the university of rwanda?'
+2026-05-27 18:01:16 | INFO     | app.services.chat:ask_question:393 | Question flagged as unresolved for admin review: 'what is the university of rwanda?'
+2026-05-27 18:01:49 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-27 18:01:48 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-27 18:01:48 | INFO     | app.services.chat:ask_question:278 | Vector search: 5 relevant chunks (best=60%)
+2026-05-27 18:01:49 | INFO     | app.services.chat:ask_question:296 | Keyword search: 0 chunks matched
+2026-05-27 18:01:49 | INFO     | app.services.chat:ask_question:331 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-27 18:01:49 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-27 18:01:50 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-27 18:01:52 | ERROR    | app.services.chat:ask_question:362 | Gemini generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-27 18:01:52 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-27 18:01:52 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'what are requirements for a student to register?'
+2026-05-27 18:01:52 | INFO     | app.services.chat:ask_question:393 | Question flagged as unresolved for admin review: 'what are requirements for a student to register?'
+2026-05-27 18:03:03 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1)
+2026-05-27 18:03:05 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-27 18:03:05 | INFO     | app.services.chat:ask_question:278 | Vector search: 5 relevant chunks (best=60%)
+2026-05-27 18:03:05 | INFO     | app.services.chat:ask_question:296 | Keyword search: 0 chunks matched
+2026-05-27 18:03:05 | INFO     | app.services.chat:ask_question:331 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-27 18:03:07 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-27 18:03:09 | WARNING  | app.services.chat:_call_gemini:155 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-27 18:03:09 | ERROR    | app.services.chat:ask_question:362 | Gemini generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-27 18:03:09 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-27 18:03:09 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'what are requirements for a student to register?'
+2026-05-27 18:03:09 | INFO     | app.services.chat:ask_question:393 | Question flagged as unresolved for admin review: 'what are requirements for a student to register?'
