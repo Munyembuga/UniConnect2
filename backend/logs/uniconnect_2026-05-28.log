@@ -101,7 +101,14 @@
 2026-05-28 10:16:11 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
 2026-05-28 10:16:11 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
 2026-05-28 10:16:11 | INFO     | app.main:lifespan:75 | Database connection check passed
+<<<<<<< Updated upstream
 2026-05-28 11:27:59 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
 2026-05-28 11:27:59 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
 2026-05-28 11:27:59 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
 2026-05-28 11:27:59 | INFO     | app.main:lifespan:75 | Database connection check passed
+=======
+2026-05-28 10:16:29 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 10:16:29 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 10:16:29 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 10:16:29 | INFO     | app.main:lifespan:75 | Database connection check passed
+>>>>>>> Stashed changes
