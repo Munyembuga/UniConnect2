@@ -8,7 +8,7 @@ Flow for every question:
        a. Vector search  — embed question → ChromaDB semantic search
        b. Keyword search — PostgreSQL full-text search (tsvector/tsquery)
        c. RRF merge      — Reciprocal Rank Fusion combines both result lists
-       d. OpenAI GPT-4o mini (or Gemini fallback) — generates grounded answer
+       d. Gemini — generates grounded answer from merged top chunks
   3. Save result to chat_history.
   4. If confidence is low or no answer found → flag as unresolved question for admin.
 """
@@ -85,7 +85,7 @@ def _static_fallback(question: str, today: str) -> str:
 
 
 def _answer_general_question(question: str) -> dict:
-    """Answer a conversational question — tries OpenAI then Gemini, falls back to static."""
+    """Answer a conversational question — tries Gemini, falls back to static."""
     today = date.today().strftime("%A, %B %d, %Y")
     fallback = _static_fallback(question, today)
 
@@ -113,31 +113,13 @@ def _answer_general_question(question: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# AI generation — tries OpenAI first, falls back to Gemini
+# AI generation — Gemini
 # ---------------------------------------------------------------------------
 
-def _call_openai(prompt: str) -> str:
-    """Call OpenAI chat completions using gpt-4o-mini."""
-    import openai as _openai
-
-    if not settings.OPENAI_API_KEY:
-        raise RuntimeError("OPENAI_API_KEY is not configured")
-
-    client = _openai.OpenAI(api_key=settings.OPENAI_API_KEY)
-    response = client.chat.completions.create(
-        model=settings.OPENAI_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.2,
-        max_tokens=512,
-    )
-    return response.choices[0].message.content.strip()
-
-
 _GEMINI_FALLBACK_MODELS = [
-    "gemini-2.0-flash-lite",
     "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-8b",
+    "gemini-2.0-flash-lite",
+    "gemini-2.5-flash",
 ]
 
 
@@ -154,7 +136,7 @@ def _call_gemini(prompt: str, retries: int = 3) -> str:
     ]
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 512},
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 1024},
     }
 
     last_exc = None
@@ -187,12 +169,6 @@ def _call_gemini(prompt: str, retries: int = 3) -> str:
 
 
 def _call_ai(prompt: str) -> str:
-    """Try OpenAI first; fall back to Gemini if OpenAI fails."""
-    if settings.OPENAI_API_KEY:
-        try:
-            return _call_openai(prompt)
-        except Exception as e:
-            logger.warning(f"OpenAI failed ({e}), falling back to Gemini")
     return _call_gemini(prompt)
 
 
@@ -366,22 +342,25 @@ async def ask_question(
     # ── 6. Build prompt & call AI ─────────────────────────────────────────────
     context_text = "\n\n---\n\n".join(merged)
     prompt = (
-        "You are a strict document-based AI assistant.\n\n"
-        "Answer questions using ONLY the context provided. Never use outside knowledge.\n\n"
-        "## ANSWER LENGTH RULES:\n"
-        "- Single value (ID, number, name, date) → ONE short sentence only.\n"
-        "- Factual question → 1–2 sentences maximum.\n"
-        "- List/explain question → 3–5 bullet points, one line each.\n"
-        "- NEVER write more than is needed.\n\n"
-        "## OTHER RULES:\n"
-        "- Use ONLY the relevant part of the context. Ignore unrelated text.\n"
-        "- Do NOT copy large chunks of text from the context.\n"
-        "- Do NOT repeat the question or add preamble.\n"
-        "- If the answer is not in the context: reply exactly: "
-        "'I could not find the exact answer in the document.'\n\n"
-        f"## CONTEXT:\n{context_text}\n\n"
-        f"## QUESTION:\n{question}\n\n"
-        "## ANSWER (be as short as possible):"
+        "You are an expert academic assistant helping university students understand documents.\n\n"
+        "You have been given relevant excerpts from a document. Your job is to READ and REASON "
+        "over these excerpts to provide a clear, well-structured answer to the student's question.\n\n"
+        "## INSTRUCTIONS:\n"
+        "- Analyse the context carefully and synthesise the information — do NOT just copy or paste text.\n"
+        "- Use your reasoning to explain concepts, steps, or findings in your own words.\n"
+        "- Structure your answer clearly:\n"
+        "  • For procedures/steps: use a numbered list.\n"
+        "  • For explanations/concepts: use short paragraphs or bullet points.\n"
+        "  • For simple factual questions (name, date, number): one concise sentence.\n"
+        "- Write in plain, clear English that a student can easily understand.\n"
+        "- Do NOT copy large raw text chunks from the context.\n"
+        "- Do NOT repeat or rephrase the question.\n"
+        "- ONLY use information found in the provided context — do not add outside knowledge.\n"
+        "- If the context does not contain enough information to answer: reply exactly: "
+        "'I could not find the answer in the uploaded document.'\n\n"
+        f"## DOCUMENT EXCERPTS:\n{context_text}\n\n"
+        f"## STUDENT QUESTION:\n{question}\n\n"
+        "## YOUR ANSWER:"
     )
 
     answer: Optional[str] = None

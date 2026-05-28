@@ -112,3 +112,238 @@
 2026-05-28 10:16:29 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
 2026-05-28 10:16:29 | INFO     | app.main:lifespan:75 | Database connection check passed
 >>>>>>> Stashed changes
+2026-05-28 11:30:57 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:30:57 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:30:57 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:30:57 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:32:08 | INFO     | app.repositories.user:update_user:132 | User updated: admin@uniconnect.com
+2026-05-28 11:32:08 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@uniconnect.com
+2026-05-28 11:32:39 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/c20ce78f-cd30-4e44-a9ed-b32ef354561a/c20ce78f-cd30-4e44-a9ed-b32ef354561a_Public involvement.pdf
+2026-05-28 11:32:40 | INFO     | app.services.document:_extract_pdf_text:204 | PDF: text-based (229720 chars, 7410 avg/page) — PyPDF2 used
+2026-05-28 11:32:40 | INFO     | app.repositories.document:create_document:48 | Document created: Public involvement.pdf (ID: 77490782-c5e1-4115-866d-a57b55722a15)
+2026-05-28 11:32:40 | INFO     | app.services.document:upload_document:76 | Document uploaded: Public involvement.pdf (ID: 77490782-c5e1-4115-866d-a57b55722a15, text_len=229720)
+2026-05-28 11:32:40 | INFO     | app.api.v1.documents:upload_document:59 | Document uploaded by admin 'admin@uniconnect.com': Public involvement.pdf
+2026-05-28 11:32:40 | INFO     | app.services.document:process_document_pipeline:354 | Pipeline: starting for Public involvement.pdf (229720 chars)
+2026-05-28 11:32:40 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 77490782-c5e1-4115-866d-a57b55722a15, status: processing
+2026-05-28 11:32:40 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-28 11:32:40 | INFO     | app.services.document:process_document_pipeline:373 | Pipeline: 22 chunks created
+2026-05-28 11:32:40 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 22 chunks for document 77490782-c5e1-4115-866d-a57b55722a15
+2026-05-28 11:32:40 | INFO     | app.services.document:process_document_pipeline:382 | Pipeline: starting embedding for 22 chunks
+2026-05-28 11:32:40 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 11:32:40 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 11:32:40 | INFO     | app.services.document:process_document_pipeline:398 | Pipeline: calling Gemini embedding API...
+2026-05-28 11:32:49 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:33:03 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 30s (attempt 2/3)
+2026-05-28 11:33:32 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 45s (attempt 3/3)
+2026-05-28 11:34:16 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:34:33 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 30s (attempt 2/3)
+2026-05-28 11:35:06 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:35:20 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 30s (attempt 2/3)
+2026-05-28 11:35:53 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:36:07 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 30s (attempt 2/3)
+2026-05-28 11:36:36 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 45s (attempt 3/3)
+2026-05-28 11:37:26 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:37:40 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 30s (attempt 2/3)
+2026-05-28 11:38:11 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:38:25 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 30s (attempt 2/3)
+2026-05-28 11:38:56 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:39:12 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 30s (attempt 2/3)
+2026-05-28 11:39:41 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 45s (attempt 3/3)
+2026-05-28 11:40:35 | WARNING  | app.services.embeddings:_embed_with_gemini:115 | Embedding 429 rate limit — waiting 15s (attempt 1/3)
+2026-05-28 11:40:52 | INFO     | app.services.document:process_document_pipeline:400 | Pipeline: embeddings done, upserting to ChromaDB...
+2026-05-28 11:40:52 | ERROR    | app.services.document:process_document_pipeline:419 | Pipeline failed for document 77490782-c5e1-4115-866d-a57b55722a15: Unequal lengths for fields: ids: 22, metadatas: 22, embeddings: 19, documents: 22 in upsert.
+2026-05-28 11:40:52 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 77490782-c5e1-4115-866d-a57b55722a15, status: failed
+2026-05-28 11:41:03 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:41:03 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:41:04 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:41:04 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:41:10 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:41:10 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:41:10 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:41:10 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:41:10 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 11:41:12 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 11:41:13 | INFO     | app.services.chat:ask_question:285 | Vector search: 5 relevant chunks (best=59%)
+2026-05-28 11:41:13 | INFO     | app.services.chat:ask_question:303 | Keyword search: 0 chunks matched
+2026-05-28 11:41:13 | INFO     | app.services.chat:ask_question:338 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-28 11:41:15 | WARNING  | app.services.chat:_call_gemini:158 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-28 11:41:16 | WARNING  | app.services.chat:_call_gemini:158 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-28 11:41:19 | ERROR    | app.services.chat:ask_question:369 | AI generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-28 11:41:19 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-28 11:41:19 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'What are the admission requirements?'
+2026-05-28 11:41:19 | INFO     | app.services.chat:ask_question:400 | Question flagged as unresolved for admin review: 'What are the admission requirements?'
+2026-05-28 11:41:52 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:41:53 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:41:53 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:41:53 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:43:32 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:43:33 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:43:33 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:43:33 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:45:03 | INFO     | app.repositories.user:update_user:132 | User updated: admin@uniconnect.com
+2026-05-28 11:45:03 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@uniconnect.com
+2026-05-28 11:47:33 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/c20ce78f-cd30-4e44-a9ed-b32ef354561a/c20ce78f-cd30-4e44-a9ed-b32ef354561a_Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:47:34 | INFO     | app.services.document:_extract_pdf_text:204 | PDF: text-based (18725 chars, 3745 avg/page) — PyPDF2 used
+2026-05-28 11:47:34 | INFO     | app.repositories.document:create_document:48 | Document created: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: 371ffe5a-c438-4380-9205-b4b26b247a57)
+2026-05-28 11:47:34 | INFO     | app.services.document:upload_document:76 | Document uploaded: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: 371ffe5a-c438-4380-9205-b4b26b247a57, text_len=18725)
+2026-05-28 11:47:34 | INFO     | app.api.v1.documents:upload_document:59 | Document uploaded by admin 'admin@uniconnect.com': Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:47:34 | INFO     | app.services.document:process_document_pipeline:354 | Pipeline: starting for Review-of-Environmental-Assessment-Methods_SEA.pdf (18725 chars)
+2026-05-28 11:47:34 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 371ffe5a-c438-4380-9205-b4b26b247a57, status: processing
+2026-05-28 11:47:34 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-28 11:47:34 | INFO     | app.services.document:process_document_pipeline:373 | Pipeline: 21 chunks created
+2026-05-28 11:47:34 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 21 chunks for document 371ffe5a-c438-4380-9205-b4b26b247a57
+2026-05-28 11:47:34 | INFO     | app.services.document:process_document_pipeline:382 | Pipeline: starting embedding for 21 chunks
+2026-05-28 11:47:34 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 11:47:34 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 11:47:34 | INFO     | app.services.document:process_document_pipeline:398 | Pipeline: calling Gemini embedding API...
+2026-05-28 11:47:48 | ERROR    | app.services.embeddings:_embed_with_gemini:129 | Gemini embedding error after 3 attempts: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-28 11:47:48 | ERROR    | app.services.document:process_document_pipeline:419 | Pipeline failed for document 371ffe5a-c438-4380-9205-b4b26b247a57: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-28 11:47:48 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 371ffe5a-c438-4380-9205-b4b26b247a57, status: failed
+2026-05-28 11:51:20 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:51:20 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:51:20 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:51:20 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:51:53 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:51:53 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:51:53 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:51:53 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:52:49 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/c20ce78f-cd30-4e44-a9ed-b32ef354561a/c20ce78f-cd30-4e44-a9ed-b32ef354561a_Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:52:49 | INFO     | app.services.document:_extract_pdf_text:204 | PDF: text-based (18725 chars, 3745 avg/page) — PyPDF2 used
+2026-05-28 11:52:49 | INFO     | app.repositories.document:create_document:48 | Document created: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: 40733dcb-af8a-4350-911b-82e89dc384d1)
+2026-05-28 11:52:49 | INFO     | app.services.document:upload_document:76 | Document uploaded: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: 40733dcb-af8a-4350-911b-82e89dc384d1, text_len=18725)
+2026-05-28 11:52:49 | INFO     | app.api.v1.documents:upload_document:59 | Document uploaded by admin 'admin@uniconnect.com': Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:52:49 | INFO     | app.services.document:process_document_pipeline:354 | Pipeline: starting for Review-of-Environmental-Assessment-Methods_SEA.pdf (18725 chars)
+2026-05-28 11:52:50 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 40733dcb-af8a-4350-911b-82e89dc384d1, status: processing
+2026-05-28 11:52:50 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-28 11:52:50 | INFO     | app.services.document:process_document_pipeline:373 | Pipeline: 21 chunks created
+2026-05-28 11:52:50 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 21 chunks for document 40733dcb-af8a-4350-911b-82e89dc384d1
+2026-05-28 11:52:50 | INFO     | app.services.document:process_document_pipeline:382 | Pipeline: starting embedding for 21 chunks
+2026-05-28 11:52:50 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 11:52:50 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 11:52:50 | INFO     | app.services.document:process_document_pipeline:398 | Pipeline: calling Gemini embedding API...
+2026-05-28 11:53:04 | ERROR    | app.services.embeddings:_embed_with_gemini:129 | Gemini embedding error after 3 attempts: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-28 11:53:04 | ERROR    | app.services.document:process_document_pipeline:419 | Pipeline failed for document 40733dcb-af8a-4350-911b-82e89dc384d1: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-28 11:53:04 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 40733dcb-af8a-4350-911b-82e89dc384d1, status: failed
+2026-05-28 11:56:20 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:56:20 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:56:20 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:56:20 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:56:30 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:56:30 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:56:30 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:56:30 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:56:58 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/c20ce78f-cd30-4e44-a9ed-b32ef354561a/c20ce78f-cd30-4e44-a9ed-b32ef354561a_Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:56:58 | INFO     | app.services.document:_extract_pdf_text:204 | PDF: text-based (18725 chars, 3745 avg/page) — PyPDF2 used
+2026-05-28 11:56:58 | INFO     | app.repositories.document:create_document:48 | Document created: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: 200a3456-53cb-4009-97d0-a99d1f5d7896)
+2026-05-28 11:56:58 | INFO     | app.services.document:upload_document:76 | Document uploaded: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: 200a3456-53cb-4009-97d0-a99d1f5d7896, text_len=18725)
+2026-05-28 11:56:58 | INFO     | app.api.v1.documents:upload_document:59 | Document uploaded by admin 'admin@uniconnect.com': Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:56:58 | INFO     | app.services.document:process_document_pipeline:354 | Pipeline: starting for Review-of-Environmental-Assessment-Methods_SEA.pdf (18725 chars)
+2026-05-28 11:56:58 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 200a3456-53cb-4009-97d0-a99d1f5d7896, status: processing
+2026-05-28 11:56:58 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-28 11:56:58 | INFO     | app.services.document:process_document_pipeline:373 | Pipeline: 21 chunks created
+2026-05-28 11:56:58 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 21 chunks for document 200a3456-53cb-4009-97d0-a99d1f5d7896
+2026-05-28 11:56:58 | INFO     | app.services.document:process_document_pipeline:382 | Pipeline: starting embedding for 21 chunks
+2026-05-28 11:56:58 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 11:56:59 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 11:56:59 | INFO     | app.services.document:process_document_pipeline:398 | Pipeline: calling Gemini embedding API...
+2026-05-28 11:57:13 | ERROR    | app.services.embeddings:_embed_with_gemini:129 | Gemini embedding error after 3 attempts: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-28 11:57:13 | ERROR    | app.services.document:process_document_pipeline:419 | Pipeline failed for document 200a3456-53cb-4009-97d0-a99d1f5d7896: 403 Client Error: Forbidden for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=AIzaSyDfrquX2dxbrWeNjQf2vnjEtUKD4xW3Ajk
+2026-05-28 11:57:13 | INFO     | app.repositories.document:update_document_status:109 | Document updated: 200a3456-53cb-4009-97d0-a99d1f5d7896, status: failed
+2026-05-28 11:58:39 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 11:58:40 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 11:58:40 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 11:58:40 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 11:59:56 | INFO     | app.services.document:_save_file:156 | File saved: /app/uploads/c20ce78f-cd30-4e44-a9ed-b32ef354561a/c20ce78f-cd30-4e44-a9ed-b32ef354561a_Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:59:56 | INFO     | app.services.document:_extract_pdf_text:204 | PDF: text-based (18725 chars, 3745 avg/page) — PyPDF2 used
+2026-05-28 11:59:57 | INFO     | app.repositories.document:create_document:48 | Document created: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: e98b3fcd-4761-4dd9-ace4-d9a3474cfe03)
+2026-05-28 11:59:57 | INFO     | app.services.document:upload_document:76 | Document uploaded: Review-of-Environmental-Assessment-Methods_SEA.pdf (ID: e98b3fcd-4761-4dd9-ace4-d9a3474cfe03, text_len=18725)
+2026-05-28 11:59:57 | INFO     | app.api.v1.documents:upload_document:59 | Document uploaded by admin 'admin@uniconnect.com': Review-of-Environmental-Assessment-Methods_SEA.pdf
+2026-05-28 11:59:57 | INFO     | app.services.document:process_document_pipeline:354 | Pipeline: starting for Review-of-Environmental-Assessment-Methods_SEA.pdf (18725 chars)
+2026-05-28 11:59:57 | INFO     | app.repositories.document:update_document_status:109 | Document updated: e98b3fcd-4761-4dd9-ace4-d9a3474cfe03, status: processing
+2026-05-28 11:59:57 | DEBUG    | app.services.chunking:split_text:29 | LangChain unavailable — using simple word splitter
+2026-05-28 11:59:57 | INFO     | app.services.document:process_document_pipeline:373 | Pipeline: 21 chunks created
+2026-05-28 11:59:57 | INFO     | app.repositories.document_chunk:create_chunks:37 | Created 21 chunks for document e98b3fcd-4761-4dd9-ace4-d9a3474cfe03
+2026-05-28 11:59:57 | INFO     | app.services.document:process_document_pipeline:382 | Pipeline: starting embedding for 21 chunks
+2026-05-28 11:59:57 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 11:59:57 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 11:59:57 | INFO     | app.services.document:process_document_pipeline:398 | Pipeline: calling Gemini embedding API...
+2026-05-28 12:00:25 | INFO     | app.services.document:process_document_pipeline:400 | Pipeline: embeddings done, upserting to ChromaDB...
+2026-05-28 12:00:25 | DEBUG    | app.services.chromadb_client:upsert:71 | Upserted 21 vectors into ChromaDB collection 'uniconnect_knowledge'
+2026-05-28 12:00:26 | INFO     | app.repositories.document:update_document_status:109 | Document updated: e98b3fcd-4761-4dd9-ace4-d9a3474cfe03, status: completed
+2026-05-28 12:00:26 | INFO     | app.services.document:process_document_pipeline:413 | Pipeline complete: document e98b3fcd-4761-4dd9-ace4-d9a3474cfe03, 21 chunks indexed
+2026-05-28 12:01:27 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 12:01:26 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 12:01:26 | INFO     | app.services.chat:ask_question:285 | Vector search: 5 relevant chunks (best=71%)
+2026-05-28 12:01:26 | INFO     | app.services.chat:ask_question:303 | Keyword search: 5 chunks matched
+2026-05-28 12:01:26 | INFO     | app.services.chat:ask_question:338 | Hybrid search merged 5 chunks (vector=5, keyword=5)
+2026-05-28 12:01:28 | WARNING  | app.services.chat:_call_gemini:158 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-28 12:01:29 | WARNING  | app.services.chat:_call_gemini:158 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-28 12:01:32 | ERROR    | app.services.chat:ask_question:369 | AI generation failed: 404 Client Error: Not Found for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=AIzaSyBvNb8uoGql67lNFcZiPqa-pMwXBrKxMx4
+2026-05-28 12:01:32 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-28 12:01:32 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'What are procedure for EIA review?'
+2026-05-28 12:01:32 | INFO     | app.services.chat:ask_question:400 | Question flagged as unresolved for admin review: 'What are procedure for EIA review?'
+2026-05-28 12:06:46 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 12:06:46 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 12:06:46 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 12:06:46 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 12:07:00 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 12:07:00 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 12:07:00 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 12:07:00 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 12:07:20 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 12:07:21 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 12:07:21 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 12:07:21 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 12:07:41 | INFO     | app.core.logging:setup_logging:54 | Logging initialized for UniConnect v1.0.0
+2026-05-28 12:07:41 | INFO     | app.main:_create_tables:28 | Database tables created / verified successfully
+2026-05-28 12:07:41 | INFO     | app.main:_seed_admin:60 | Admin account already exists: admin@uniconnect.com
+2026-05-28 12:07:41 | INFO     | app.main:lifespan:75 | Database connection check passed
+2026-05-28 12:08:19 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 12:08:20 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 12:08:20 | INFO     | app.services.chat:ask_question:284 | Vector search: 5 relevant chunks (best=71%)
+2026-05-28 12:08:21 | INFO     | app.services.chat:ask_question:302 | Keyword search: 5 chunks matched
+2026-05-28 12:08:21 | INFO     | app.services.chat:ask_question:337 | Hybrid search merged 5 chunks (vector=5, keyword=5)
+2026-05-28 12:08:22 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-28 12:08:23 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-28 12:08:27 | INFO     | app.services.chat:_call_gemini:162 | Used fallback model: gemini-2.5-flash
+2026-05-28 12:08:27 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-28 12:10:12 | INFO     | app.repositories.user:update_user:132 | User updated: admin@uniconnect.com
+2026-05-28 12:10:12 | INFO     | app.services.user:login_user:111 | User logged in successfully: admin@uniconnect.com
+2026-05-28 12:10:58 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 12:11:00 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 12:11:00 | INFO     | app.services.chat:ask_question:284 | Vector search: 5 relevant chunks (best=59%)
+2026-05-28 12:11:00 | INFO     | app.services.chat:ask_question:302 | Keyword search: 0 chunks matched
+2026-05-28 12:11:00 | INFO     | app.services.chat:ask_question:337 | Hybrid search merged 5 chunks (vector=5, keyword=0)
+2026-05-28 12:11:01 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-28 12:11:03 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-28 12:11:05 | INFO     | app.services.chat:_call_gemini:162 | Used fallback model: gemini-2.5-flash
+2026-05-28 12:11:05 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-28 12:11:05 | INFO     | app.repositories.unresolved_question:create:46 | Unresolved question flagged: 'What are the admission requirements?'
+2026-05-28 12:11:05 | INFO     | app.services.chat:ask_question:402 | Question flagged as unresolved for admin review: 'What are the admission requirements?'
+2026-05-28 12:11:43 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 12:11:46 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 12:11:46 | INFO     | app.services.chat:ask_question:284 | Vector search: 5 relevant chunks (best=70%)
+2026-05-28 12:11:46 | INFO     | app.services.chat:ask_question:302 | Keyword search: 5 chunks matched
+2026-05-28 12:11:46 | INFO     | app.services.chat:ask_question:337 | Hybrid search merged 5 chunks (vector=5, keyword=5)
+2026-05-28 12:11:47 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-28 12:11:48 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-28 12:11:54 | INFO     | app.services.chat:_call_gemini:162 | Used fallback model: gemini-2.5-flash
+2026-05-28 12:11:54 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-28 12:13:03 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 12:13:04 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 12:13:04 | INFO     | app.services.chat:ask_question:284 | Vector search: 5 relevant chunks (best=70%)
+2026-05-28 12:13:05 | INFO     | app.services.chat:ask_question:302 | Keyword search: 5 chunks matched
+2026-05-28 12:13:05 | INFO     | app.services.chat:ask_question:337 | Hybrid search merged 5 chunks (vector=5, keyword=5)
+2026-05-28 12:13:05 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-28 12:13:07 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-28 12:13:12 | INFO     | app.services.chat:_call_gemini:162 | Used fallback model: gemini-2.5-flash
+2026-05-28 12:13:12 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
+2026-05-28 12:13:16 | INFO     | app.services.embeddings:__init__:33 | Embedding provider: Google Gemini (text-embedding-004 via REST v1beta)
+2026-05-28 12:13:18 | INFO     | app.services.chromadb_client:_build_client:116 | ChromaDB: connected via HTTP (chromadb:8000)
+2026-05-28 12:13:18 | INFO     | app.services.chat:ask_question:284 | Vector search: 5 relevant chunks (best=70%)
+2026-05-28 12:13:18 | INFO     | app.services.chat:ask_question:302 | Keyword search: 5 chunks matched
+2026-05-28 12:13:18 | INFO     | app.services.chat:ask_question:337 | Hybrid search merged 5 chunks (vector=5, keyword=5)
+2026-05-28 12:13:19 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash — trying next model
+2026-05-28 12:13:21 | WARNING  | app.services.chat:_call_gemini:157 | Gemini 429 on gemini-2.0-flash-lite — trying next model
+2026-05-28 12:13:26 | INFO     | app.services.chat:_call_gemini:162 | Used fallback model: gemini-2.5-flash
+2026-05-28 12:13:26 | DEBUG    | app.repositories.chat_history:create:39 | Chat history saved for user c20ce78f-cd30-4e44-a9ed-b32ef354561a
