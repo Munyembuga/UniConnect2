@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Eye, EyeOff, ArrowLeft, LogIn, UserPlus } from 'lucide-react'
 import { login, register, getMe, clearAuth } from '../services/api'
 
+
 export default function Login() {
   const [mode, setMode]           = useState('login')   // 'login' | 'register'
   const [form, setForm]           = useState({ email: '', password: '', full_name: '' })
@@ -34,13 +35,14 @@ export default function Login() {
         // auto-login after register
       }
       await login(form.email, form.password)
-      // fetch user profile and store it
+      // fetch user profile, store it, then redirect based on role
       try {
         const me = await getMe()
         localStorage.setItem('user', JSON.stringify(me))
-      } catch (_) { /* non-fatal */ }
-
-      navigate('/chat')
+        navigate(me.role === 'admin' ? '/admin' : '/chat', { replace: true })
+      } catch (_) {
+        navigate('/chat', { replace: true })
+      }
     } catch (err) {
       clearAuth()
       setError(err.message || 'Authentication failed. Please try again.')
@@ -168,9 +170,6 @@ export default function Login() {
             </form>
           </div>
 
-          <p className="text-center text-xs text-gray-400 mt-6">
-            Admin? <Link to="/admin/login" className="text-primary hover:underline">Sign in to the admin portal</Link>
-          </p>
         </div>
       </div>
     </div>

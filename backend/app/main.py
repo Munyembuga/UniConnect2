@@ -25,6 +25,23 @@ async def _create_tables() -> None:
 
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+
+        # Migrate: add new enum value and column (each runs independently so one failure won't block the other)
+        from sqlalchemy import text
+        try:
+            async with engine.connect() as conn:
+                await conn.execution_options(isolation_level="AUTOCOMMIT").execute(
+                    text("ALTER TYPE documenttype ADD VALUE IF NOT EXISTS 'url'")
+                )
+        except Exception as e:
+            logger.warning(f"Enum migration (non-fatal): {e}")
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(text(
+                    "ALTER TABLE documents ADD COLUMN IF NOT EXISTS source_url VARCHAR(1000)"
+                ))
+        except Exception as e:
+            logger.warning(f"Column migration (non-fatal): {e}")
         logger.info("Database tables created / verified successfully")
     except Exception as e:
         logger.warning(f"Table creation failed (non-fatal): {e}")

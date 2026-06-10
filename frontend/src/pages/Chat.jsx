@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Send, Mic, MicOff, Volume2, RotateCcw, ChevronDown, ArrowLeft, Sparkles } from 'lucide-react'
 import { askQuestion, getToken, clearAuth } from '../services/api'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const GREETING = {
   id: 0,
@@ -37,6 +39,61 @@ function TypingIndicator() {
   )
 }
 
+/* ── Markdown components for bot messages ── */
+const mdComponents = {
+  p: ({ children }) => (
+    <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+  ),
+  strong: ({ children }) => (
+    <strong className="font-semibold text-slate-800">{children}</strong>
+  ),
+  em: ({ children }) => (
+    <em className="italic text-slate-700">{children}</em>
+  ),
+  ul: ({ children }) => (
+    <ul className="mt-1.5 mb-2 space-y-1 pl-1">{children}</ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="mt-1.5 mb-2 space-y-1 pl-1 list-none counter-reset-item">{children}</ol>
+  ),
+  li: ({ children, node, ...props }) => {
+    const isOrdered = node?.parent?.tagName === 'ol'
+    return (
+      <li className="flex items-start gap-2 text-sm leading-relaxed">
+        {!isOrdered && (
+          <span className="mt-[7px] w-1.5 h-1.5 rounded-full bg-primary/70 shrink-0" />
+        )}
+        <span className="flex-1">{children}</span>
+      </li>
+    )
+  },
+  h1: ({ children }) => (
+    <h1 className="text-base font-bold text-slate-800 mt-3 mb-1.5 first:mt-0">{children}</h1>
+  ),
+  h2: ({ children }) => (
+    <h2 className="text-sm font-bold text-slate-800 mt-3 mb-1.5 first:mt-0">{children}</h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="text-sm font-semibold text-slate-700 mt-2 mb-1 first:mt-0">{children}</h3>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-primary/30 pl-3 my-2 text-slate-600 italic text-sm">
+      {children}
+    </blockquote>
+  ),
+  code: ({ inline, children }) =>
+    inline ? (
+      <code className="bg-primary/8 text-primary px-1.5 py-0.5 rounded text-xs font-mono">
+        {children}
+      </code>
+    ) : (
+      <pre className="bg-gray-50 border border-gray-200 rounded-lg p-3 my-2 overflow-x-auto text-xs font-mono text-slate-700">
+        <code>{children}</code>
+      </pre>
+    ),
+  hr: () => <hr className="my-3 border-gray-200" />,
+}
+
 /* ── Message bubble ── */
 function MessageBubble({ msg }) {
   const isUser = msg.role === 'user'
@@ -62,13 +119,26 @@ function MessageBubble({ msg }) {
       </div>
 
       {/* Bubble + meta */}
-      <div className={`max-w-[75%] md:max-w-[62%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
-        <div className={`px-5 py-3.5 rounded-2xl text-sm leading-relaxed ${
+      <div className={`max-w-[75%] md:max-w-[65%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+        <div className={`px-5 py-3.5 rounded-2xl text-sm ${
           isUser
             ? 'bg-primary text-white rounded-tr-sm shadow-md'
             : 'bg-white text-slate-dark border border-gray-200 rounded-tl-sm shadow-sm'
         }`}>
-          <p className="whitespace-pre-wrap">{msg.text}</p>
+          {isUser ? (
+            /* User messages: plain text */
+            <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
+          ) : (
+            /* Bot messages: full markdown rendering */
+            <div className="prose-chat">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={mdComponents}
+              >
+                {msg.text}
+              </ReactMarkdown>
+            </div>
+          )}
 
           {/* Source badge — bot only */}
           {msg.source && !isUser && (
@@ -108,7 +178,6 @@ export default function Chat() {
   const [input, setInput]             = useState('')
   const [isTyping, setIsTyping]       = useState(false)
   const [isRecording, setIsRecording] = useState(false)
-  const [lang, setLang]               = useState('EN')
   const [showSuggestions, setShowSuggestions] = useState(true)
   const navigate = useNavigate()
 
@@ -216,7 +285,7 @@ export default function Chat() {
     }
 
     const recognition = new SpeechRec()
-    recognition.lang            = lang === 'RW' ? 'rw-RW' : 'en-US'
+    recognition.lang            = 'en-US'
     recognition.continuous      = true   /* keep listening until explicitly stopped */
     recognition.interimResults  = true   /* show partial results in real time */
     recognition.maxAlternatives = 1
@@ -295,21 +364,6 @@ export default function Chat() {
             <span className="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse" />
             Online · University of Rwanda Assistant
           </div>
-        </div>
-
-        {/* Language toggle */}
-        <div className="flex items-center bg-white/10 rounded-xl p-1 gap-0.5">
-          {['EN', 'RW'].map(l => (
-            <button
-              key={l}
-              onClick={() => setLang(l)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 ${
-                lang === l ? 'bg-white text-primary shadow-sm' : 'text-white/70 hover:text-white'
-              }`}
-            >
-              {l}
-            </button>
-          ))}
         </div>
 
         <button

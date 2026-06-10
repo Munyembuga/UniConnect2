@@ -15,6 +15,25 @@
 }
 
 @layer components {
+  /* ── Chat markdown renderer ── */
+  .prose-chat {
+    @apply text-sm leading-relaxed;
+  }
+  .prose-chat ol {
+    counter-reset: item;
+  }
+  .prose-chat ol > li {
+    counter-increment: item;
+    @apply flex items-start gap-2;
+  }
+  .prose-chat ol > li > span:first-child {
+    display: none; /* hide the dot for ordered lists */
+  }
+  .prose-chat ol > li::before {
+    content: counter(item) ".";
+    @apply text-primary font-semibold text-xs mt-0.5 shrink-0 w-5;
+  }
+
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg
            hover:bg-primary-dark transition-all duration-200 shadow-sm hover:shadow-md active:scale-95;

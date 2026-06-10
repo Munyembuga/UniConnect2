@@ -47,9 +47,13 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # --- Gemini AI (embeddings) ---
+    # --- Gemini AI (embeddings + OCR) ---
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.0-flash"
+
+    # --- OpenRouter (chat generation) ---
+    OPENROUTER_API_KEY: str = ""
+    OPENROUTER_MODEL: str = "google/gemini-3.5-flash"
 
 
     # --- ChromaDB ---

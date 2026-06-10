@@ -96,7 +96,7 @@ export default function Home() {
                 className="hero-animate text-4xl md:text-5xl lg:text-[3.4rem] font-extrabold text-white leading-[1.1] mb-6 text-balance"
                 style={{ animationDelay: '0.12s' }}
               >
-                Your University,
+                Your University of Rwanda,
                 <br />
                 <span className="text-primary-light">Answered Instantly</span>
               </h1>

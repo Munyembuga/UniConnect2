@@ -13,6 +13,7 @@ class DocumentType(str, Enum):
     PDF = "pdf"
     DOCX = "docx"
     TXT = "txt"
+    URL = "url"
 
 
 class DocumentUploadResponse(BaseModel):
@@ -62,7 +63,25 @@ class DocumentListResponse(BaseModel):
     file_size: int
     is_processed: str
     total_chunks: int
+    source_url: Optional[str] = None
     created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class UrlIngestRequest(BaseModel):
+    url: str = Field(..., description="Full URL of the webpage to scrape")
+    title: Optional[str] = Field(None, description="Optional custom title for this source")
+
+
+class UrlIngestResponse(BaseModel):
+    id: UUID
+    filename: str
+    source_url: str
+    is_processed: str
+    created_at: datetime
+    message: str
 
     class Config:
         from_attributes = True

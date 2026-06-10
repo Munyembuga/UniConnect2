@@ -85,15 +85,16 @@ def _static_fallback(question: str, today: str) -> str:
 
 
 def _answer_general_question(question: str) -> dict:
-    """Answer a conversational question — tries Gemini, falls back to static."""
+    """Answer a conversational question — tries AI, falls back to static."""
     today = date.today().strftime("%A, %B %d, %Y")
     fallback = _static_fallback(question, today)
 
     prompt = (
         f"You are UniConnect, a friendly AI assistant for university students. "
         f"Today's date is {today}.\n\n"
+        f"IMPORTANT: Detect the language the student is using and respond in that exact same language.\n\n"
         f"The student says: \"{question}\"\n\n"
-        f"Reply naturally and concisely (1–3 sentences). "
+        f"Reply naturally and concisely (1–3 sentences) in the same language the student used. "
         f"If asked who you are, say you are UniConnect, an AI assistant that helps "
         f"students by answering questions about uploaded university documents and general queries. "
         f"If asked what you can do, briefly describe: answer questions from uploaded documents, "
@@ -113,7 +114,7 @@ def _answer_general_question(question: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# AI generation — Gemini
+# AI generation — OpenRouter (primary) → Gemini (fallback)
 # ---------------------------------------------------------------------------
 
 _GEMINI_FALLBACK_MODELS = [
@@ -168,7 +169,33 @@ def _call_gemini(prompt: str, retries: int = 3) -> str:
     raise last_exc or RuntimeError("All Gemini models failed")
 
 
+def _call_openrouter(prompt: str) -> str:
+    """Call OpenRouter chat completions (OpenAI-compatible API)."""
+    import openai as _openai
+
+    if not settings.OPENROUTER_API_KEY:
+        raise RuntimeError("OPENROUTER_API_KEY is not configured")
+
+    client = _openai.OpenAI(
+        api_key=settings.OPENROUTER_API_KEY,
+        base_url="https://openrouter.ai/api/v1",
+    )
+    response = client.chat.completions.create(
+        model=settings.OPENROUTER_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+        max_tokens=1024,
+    )
+    return response.choices[0].message.content.strip()
+
+
 def _call_ai(prompt: str) -> str:
+    """Try OpenRouter first; fall back to Gemini if it fails."""
+    if settings.OPENROUTER_API_KEY:
+        try:
+            return _call_openrouter(prompt)
+        except Exception as e:
+            logger.warning(f"OpenRouter failed ({e}), falling back to Gemini")
     return _call_gemini(prompt)
 
 
@@ -345,6 +372,9 @@ async def ask_question(
         "You are an expert academic assistant helping university students understand documents.\n\n"
         "You have been given relevant excerpts from a document. Your job is to READ and REASON "
         "over these excerpts to provide a clear, well-structured answer to the student's question.\n\n"
+        "IMPORTANT: Detect the language the student used in their question and write your entire "
+        "answer in that same language (e.g. if they wrote in French, answer in French; "
+        "if Kinyarwanda, answer in Kinyarwanda; if English, answer in English).\n\n"
         "## INSTRUCTIONS:\n"
         "- Analyse the context carefully and synthesise the information — do NOT just copy or paste text.\n"
         "- Use your reasoning to explain concepts, steps, or findings in your own words.\n"
@@ -352,12 +382,12 @@ async def ask_question(
         "  • For procedures/steps: use a numbered list.\n"
         "  • For explanations/concepts: use short paragraphs or bullet points.\n"
         "  • For simple factual questions (name, date, number): one concise sentence.\n"
-        "- Write in plain, clear English that a student can easily understand.\n"
+        "- Write in plain, clear language that a student can easily understand.\n"
         "- Do NOT copy large raw text chunks from the context.\n"
         "- Do NOT repeat or rephrase the question.\n"
         "- ONLY use information found in the provided context — do not add outside knowledge.\n"
-        "- If the context does not contain enough information to answer: reply exactly: "
-        "'I could not find the answer in the uploaded document.'\n\n"
+        "- If the context does not contain enough information to answer: say so in the same "
+        "language the student used.\n\n"
         f"## DOCUMENT EXCERPTS:\n{context_text}\n\n"
         f"## STUDENT QUESTION:\n{question}\n\n"
         "## YOUR ANSWER:"

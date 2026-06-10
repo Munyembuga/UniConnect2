@@ -53,6 +53,7 @@ services:
     restart: unless-stopped
     env_file:
       - ./backend/.env
+    command: ["sh", "/app/entrypoint.sh"]
     ports:
       - "8000:8000"
     volumes:

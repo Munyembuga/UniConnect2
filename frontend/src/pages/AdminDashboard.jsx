@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  listDocuments, uploadDocument, deleteDocument,
+  listDocuments, uploadDocument, deleteDocument, ingestUrl,
   listUnresolved, answerQuestion, ignoreQuestion,
   getAllChatHistory, clearAuth,
 } from '../services/api'
@@ -10,7 +10,7 @@ import {
   Database, Settings, LogOut, Menu, X, Plus, Edit2, Trash2,
   CheckCircle, AlertCircle, Search, Filter, ChevronDown,
   TrendingUp, Users, Clock, ThumbsUp, FileText, Eye, Save,
-  RefreshCw, Upload
+  RefreshCw, Upload, Globe,
 } from 'lucide-react'
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -510,23 +510,25 @@ function UnansweredQueries() {
 }
 
 function KnowledgeBase() {
-  const [docs, setDocs]         = useState([])
-  const [loading, setLoading]   = useState(true)
+  const [docs, setDocs]           = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState('')
+  const [showModal, setShowModal] = useState(false)
+  const [tab, setTab]             = useState('document') // 'document' | 'url'
+  // document upload state
   const [uploading, setUploading] = useState(false)
   const [uploadPct, setUploadPct] = useState(0)
-  const [error, setError]       = useState('')
   const fileRef = useRef()
+  // url ingest state
+  const [urlInput, setUrlInput]   = useState('')
+  const [urlTitle, setUrlTitle]   = useState('')
+  const [ingesting, setIngesting] = useState(false)
 
   const load = async () => {
     setLoading(true)
-    try {
-      const data = await listDocuments()
-      setDocs(data)
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoading(false)
-    }
+    try { setDocs(await listDocuments()) }
+    catch (e) { setError(e.message) }
+    finally { setLoading(false) }
   }
 
   useEffect(() => { load() }, [])
@@ -534,75 +536,49 @@ function KnowledgeBase() {
   const handleUpload = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setUploading(true)
-    setUploadPct(0)
-    setError('')
+    setUploading(true); setUploadPct(0); setError('')
     try {
       await uploadDocument(file, setUploadPct)
+      setShowModal(false)
       await load()
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setUploading(false)
-      setUploadPct(0)
-      e.target.value = ''
-    }
+    } catch (e) { setError(e.message) }
+    finally { setUploading(false); setUploadPct(0); e.target.value = '' }
+  }
+
+  const handleIngestUrl = async () => {
+    if (!urlInput.trim()) return
+    setIngesting(true); setError('')
+    try {
+      await ingestUrl(urlInput.trim(), urlTitle.trim())
+      setShowModal(false); setUrlInput(''); setUrlTitle('')
+      await load()
+    } catch (e) { setError(e.message) }
+    finally { setIngesting(false) }
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this document? This cannot be undone.')) return
-    try {
-      await deleteDocument(id)
-      setDocs(prev => prev.filter(d => d.id !== id))
-    } catch (e) {
-      setError(e.message)
-    }
+    if (!confirm('Delete this source? This cannot be undone.')) return
+    try { await deleteDocument(id); setDocs(prev => prev.filter(d => d.id !== id)) }
+    catch (e) { setError(e.message) }
   }
 
   const fmt = (bytes) => {
     if (!bytes) return '—'
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB'
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+    return bytes < 1024 * 1024 ? (bytes / 1024).toFixed(0) + ' KB' : (bytes / (1024 * 1024)).toFixed(1) + ' MB'
   }
-
-  const statusColor = (s) => {
-    if (s === 'completed') return 'bg-green-50 text-green-600'
-    if (s === 'failed')    return 'bg-red-50 text-red-600'
-    if (s === 'processing') return 'bg-blue-50 text-primary'
-    return 'bg-gray-50 text-gray-500'
-  }
-  const statusLabel = (s) => {
-    if (s === 'completed')  return 'Indexed'
-    if (s === 'failed')     return 'Failed'
-    if (s === 'processing') return 'Processing…'
-    return s
-  }
+  const statusColor = (s) => ({ completed: 'bg-green-50 text-green-600', failed: 'bg-red-50 text-red-600', processing: 'bg-blue-50 text-primary' }[s] || 'bg-gray-50 text-gray-500')
+  const statusLabel = (s) => ({ completed: 'Completed', failed: 'Failed', processing: 'Processing…', pending: 'Pending' }[s] || s)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h2 className="text-xl font-bold text-slate-ur">Knowledge Base</h2>
-          <p className="text-gray-400 text-sm mt-0.5">Documents used to answer student queries</p>
+          <p className="text-gray-400 text-sm mt-0.5">Documents and web sources used to answer student queries</p>
         </div>
-        <div className="flex items-center gap-2">
-          {uploading && (
-            <span className="text-xs text-primary font-medium">{uploadPct}%</span>
-          )}
-          <button
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="btn-primary py-2 px-4 text-sm disabled:opacity-60"
-          >
-            {uploading ? (
-              <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <Upload size={14} />
-            )}
-            {uploading ? 'Uploading…' : 'Upload Document'}
-          </button>
-          <input ref={fileRef} type="file" accept=".pdf,.docx,.txt" className="hidden" onChange={handleUpload} />
-        </div>
+        <button onClick={() => { setShowModal(true); setTab('document'); setError('') }} className="btn-primary py-2 px-4 text-sm">
+          <Plus size={14} /> Add Knowledge
+        </button>
       </div>
 
       {error && (
@@ -613,28 +589,47 @@ function KnowledgeBase() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50 text-left">
-              <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider">Document</th>
+              <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider">Source</th>
+              <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider">Type</th>
               <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider">Size</th>
-              <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider">Uploaded</th>
+              <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider">Added</th>
               <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider">Status</th>
               <th className="px-5 py-3.5 font-semibold text-slate-ur text-xs uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} className="text-center py-10 text-gray-400 text-sm">Loading…</td></tr>
+              <tr><td colSpan={6} className="text-center py-10 text-gray-400 text-sm">Loading…</td></tr>
             ) : docs.length === 0 ? (
-              <tr><td colSpan={5} className="text-center py-10 text-gray-400 text-sm">No documents uploaded yet.</td></tr>
+              <tr><td colSpan={6} className="text-center py-10 text-gray-400 text-sm">No knowledge sources added yet.</td></tr>
             ) : docs.map((doc) => (
               <tr key={doc.id} className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                 <td className="px-5 py-3.5">
-                  <div className="flex items-center gap-2">
-                    <FileText size={15} className="text-primary shrink-0" />
-                    <span className="text-slate-dark font-medium truncate max-w-[200px]">{doc.filename}</span>
+                  <div className="flex items-center gap-2 max-w-[240px]">
+                    {doc.document_type === 'url'
+                      ? <Globe size={15} className="text-primary shrink-0" />
+                      : <FileText size={15} className="text-primary shrink-0" />
+                    }
+                    <div className="min-w-0">
+                      <p className="text-slate-dark font-medium truncate">{doc.filename.replace(/\.txt$/, '')}</p>
+                      {doc.source_url && (
+                        <a href={doc.source_url} target="_blank" rel="noreferrer"
+                          className="text-[11px] text-primary hover:underline truncate block max-w-[220px]">
+                          {doc.source_url}
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </td>
+                <td className="px-5 py-3.5">
+                  <span className={`px-2 py-0.5 text-[11px] font-semibold rounded uppercase ${
+                    doc.document_type === 'url' ? 'bg-indigo-50 text-indigo-600' : 'bg-primary/10 text-primary'
+                  }`}>
+                    {doc.document_type === 'url' ? 'Web' : doc.document_type?.toUpperCase()}
+                  </span>
+                </td>
                 <td className="px-5 py-3.5 text-gray-500">{fmt(doc.file_size)}</td>
-                <td className="px-5 py-3.5 text-gray-500">{doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '—'}</td>
+                <td className="px-5 py-3.5 text-gray-500 whitespace-nowrap">{doc.created_at ? new Date(doc.created_at).toLocaleDateString() : '—'}</td>
                 <td className="px-5 py-3.5">
                   <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${statusColor(doc.is_processed)}`}>
                     {statusLabel(doc.is_processed)}
@@ -642,7 +637,7 @@ function KnowledgeBase() {
                 </td>
                 <td className="px-5 py-3.5 text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <button onClick={() => load()} className="p-1.5 rounded-lg text-gray-400 hover:text-primary hover:bg-primary/5 transition-colors" title="Refresh">
+                    <button onClick={load} className="p-1.5 rounded-lg text-gray-400 hover:text-primary hover:bg-primary/5 transition-colors" title="Refresh status">
                       <RefreshCw size={14} />
                     </button>
                     <button onClick={() => handleDelete(doc.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Delete">
@@ -655,6 +650,105 @@ function KnowledgeBase() {
           </tbody>
         </table>
       </div>
+
+      {/* ── Add Knowledge Modal ── */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-7">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold text-slate-ur text-lg">Add Knowledge</h3>
+              <button onClick={() => setShowModal(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Tab toggle */}
+            <div className="flex bg-gray-100 rounded-xl p-1 gap-1 mb-6">
+              {[
+                { key: 'document', icon: <FileText size={15} />, label: 'Document' },
+                { key: 'url',      icon: <Globe size={15} />,     label: 'Website Link' },
+              ].map(({ key, icon, label }) => (
+                <button key={key} onClick={() => { setTab(key); setError('') }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                    tab === key ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-slate-ur'
+                  }`}>
+                  {icon} {label}
+                </button>
+              ))}
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 text-sm mb-4">{error}</div>
+            )}
+
+            {tab === 'document' ? (
+              /* ── Document upload ── */
+              <div>
+                <div
+                  onClick={() => !uploading && fileRef.current?.click()}
+                  className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-primary/40 hover:bg-primary/2 transition-all"
+                >
+                  {uploading ? (
+                    <div className="space-y-2">
+                      <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+                      <p className="text-sm text-primary font-medium">Uploading… {uploadPct}%</p>
+                      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${uploadPct}%` }} />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload size={28} className="text-gray-300 mx-auto mb-3" />
+                      <p className="text-sm font-semibold text-slate-ur">Click to choose a file</p>
+                      <p className="text-xs text-gray-400 mt-1">PDF, DOCX, or TXT — up to 50 MB</p>
+                    </>
+                  )}
+                </div>
+                <input ref={fileRef} type="file" accept=".pdf,.docx,.txt" className="hidden" onChange={handleUpload} />
+              </div>
+            ) : (
+              /* ── Website URL ── */
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-slate-ur mb-1.5">Website URL <span className="text-red-400">*</span></label>
+                  <input
+                    type="url"
+                    value={urlInput}
+                    onChange={e => setUrlInput(e.target.value)}
+                    placeholder="https://ur.ac.rw/announcements/..."
+                    className="input-field"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1">The page will be scraped and its text added to the knowledge base.</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-ur mb-1.5">Custom Title <span className="text-gray-400">(optional)</span></label>
+                  <input
+                    type="text"
+                    value={urlTitle}
+                    onChange={e => setUrlTitle(e.target.value)}
+                    placeholder="e.g. UR Scholarship Announcement 2026"
+                    className="input-field"
+                  />
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button onClick={() => setShowModal(false)} className="btn-outline py-2 px-5 text-sm">Cancel</button>
+                  <button
+                    onClick={handleIngestUrl}
+                    disabled={!urlInput.trim() || ingesting}
+                    className="btn-primary py-2 px-5 text-sm disabled:opacity-60"
+                  >
+                    {ingesting ? (
+                      <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Scraping…</>
+                    ) : (
+                      <><Globe size={14} /> Add Website</>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

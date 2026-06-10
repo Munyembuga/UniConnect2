@@ -20,6 +20,8 @@ from app.schemas.document import (
     DocumentListResponse,
     DocumentDetailResponse,
     DocumentDeleteResponse,
+    UrlIngestRequest,
+    UrlIngestResponse,
 )
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
@@ -181,3 +183,35 @@ async def delete_document(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error deleting document",
         )
+
+
+@router.post(
+    "/ingest-url",
+    response_model=UrlIngestResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Ingest a webpage URL into the knowledge base (Admin only)",
+)
+async def ingest_url(
+    body: UrlIngestRequest,
+    background_tasks: BackgroundTasks,
+    admin: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+    document_service: DocumentService = Depends(get_document_service),
+) -> UrlIngestResponse:
+    try:
+        document = await document_service.ingest_url(admin.id, body.url, body.title)
+        background_tasks.add_task(process_document_pipeline, document.id)
+        logger.info(f"URL ingested by admin '{admin.email}': {body.url}")
+        return UrlIngestResponse(
+            id=document.id,
+            filename=document.filename,
+            source_url=document.source_url,
+            is_processed=document.is_processed,
+            created_at=document.created_at,
+            message="URL scraped successfully. Embedding pipeline running in background.",
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error ingesting URL: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

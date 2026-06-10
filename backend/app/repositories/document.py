@@ -27,6 +27,7 @@ class DocumentRepository:
         file_size: int,
         content_preview: Optional[str] = None,
         extracted_text: Optional[str] = None,
+        source_url: Optional[str] = None,
     ) -> Document:
         """Create a new document record, storing the full extracted text."""
         try:
@@ -38,6 +39,7 @@ class DocumentRepository:
                 file_size=file_size,
                 content_preview=content_preview,
                 extracted_text=extracted_text,
+                source_url=source_url,
                 is_processed="pending",
                 total_chunks=0,
             )

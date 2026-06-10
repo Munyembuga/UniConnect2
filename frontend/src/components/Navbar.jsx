@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Menu, X, LogIn, LogOut, LayoutDashboard } from 'lucide-react'
+import { getToken, getUser, clearAuth } from '../services/api'
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -9,9 +10,13 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const location = useLocation()
+  const [menuOpen, setMenuOpen]   = useState(false)
+  const [scrolled, setScrolled]   = useState(false)
+  const location                  = useLocation()
+  const navigate                  = useNavigate()
+  const token                     = getToken()
+  const user                      = getUser()
+  const isAdmin                   = user?.role === 'admin'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -19,18 +24,20 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location])
+  useEffect(() => { setMenuOpen(false) }, [location])
+
+  const handleLogout = () => {
+    clearAuth()
+    navigate('/')
+  }
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-primary shadow-lg' : 'bg-primary'
-      }`}
-    >
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled ? 'bg-primary shadow-lg' : 'bg-primary'
+    }`}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center font-bold text-white text-sm tracking-wide group-hover:bg-white/25 transition-colors">
@@ -42,7 +49,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map(link => (
               <NavLink
@@ -61,22 +68,46 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Admin login + mobile toggle */}
-          <div className="flex items-center gap-3">
-            <Link
-              to="/admin/login"
-              className="hidden md:inline-flex items-center px-4 py-2 text-sm font-semibold text-primary bg-white rounded-lg hover:bg-primary-50 transition-colors duration-150"
-            >
-              Admin Portal
-            </Link>
-            <button
-              className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
-              onClick={() => setMenuOpen(o => !o)}
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+          {/* Desktop right — auth buttons */}
+          <div className="hidden md:flex items-center gap-2">
+            {token ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                  >
+                    <LayoutDashboard size={15} />
+                    Dashboard
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-primary bg-white rounded-lg hover:bg-primary-50 transition-colors"
+                >
+                  <LogOut size={15} />
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-primary bg-white rounded-lg hover:bg-primary-50 transition-colors"
+              >
+                <LogIn size={15} />
+                Sign In
+              </Link>
+            )}
           </div>
+
+          {/* Mobile toggle */}
+          <button
+            className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
         </div>
 
         {/* Mobile menu */}
@@ -97,12 +128,37 @@ export default function Navbar() {
                 {link.label}
               </NavLink>
             ))}
-            <Link
-              to="/admin/login"
-              className="block mt-2 px-4 py-2.5 text-sm font-semibold text-primary bg-white rounded-lg text-center"
-            >
-              Admin Portal
-            </Link>
+
+            <div className="pt-2 border-t border-white/10 mt-2">
+              {token ? (
+                <>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                      <LayoutDashboard size={15} />
+                      Dashboard
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-4 py-2.5 mt-1 text-sm font-semibold text-primary bg-white rounded-lg text-center justify-center"
+                  >
+                    <LogOut size={15} />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-primary bg-white rounded-lg"
+                >
+                  <LogIn size={15} />
+                  Sign In
+                </Link>
+              )}
+            </div>
           </div>
         )}
       </nav>

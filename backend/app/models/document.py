@@ -18,6 +18,7 @@ class DocumentType(str, Enum):
     PDF = "pdf"
     DOCX = "docx"
     TXT = "txt"
+    URL = "url"
 
 
 class Document(Base):
@@ -54,6 +55,7 @@ class Document(Base):
     extracted_text = Column(Text, nullable=True)
     total_chunks = Column(Integer, default=0)
     is_processed = Column(String(50), default="pending")  # pending, processing, completed, failed
+    source_url   = Column(String(1000), nullable=True)    # original URL for web-scraped sources
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 

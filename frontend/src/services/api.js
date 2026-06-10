@@ -126,6 +126,15 @@ export async function uploadDocument(file, onProgress) {
   })
 }
 
+export async function ingestUrl(url, title = '') {
+  const res = await fetch(`${BASE}/documents/ingest-url`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ url, title: title || undefined }),
+  })
+  return handleResponse(res)
+}
+
 export async function deleteDocument(id) {
   const res = await fetch(`${BASE}/documents/${id}`, {
     method: 'DELETE',
