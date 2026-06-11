@@ -1,11 +1,5 @@
 """
 Repository for UnresolvedQuestion database operations.
-
-Flow:
-  1. Chat service saves low-confidence questions here (status='pending').
-  2. Admin views pending questions and provides answers (status='answered').
-  3. Before next RAG call, chat service checks for similar answered questions
-     and returns the admin answer directly.
 """
 from typing import List, Optional
 from uuid import UUID
@@ -29,14 +23,15 @@ class UnresolvedQuestionRepository:
         question: str,
         ai_attempt: Optional[str],
         confidence_score: Optional[float],
+        category: Optional[str] = None,
     ) -> UnresolvedQuestion:
-        """Save a new unresolved question."""
         uq = UnresolvedQuestion(
             chat_history_id=chat_history_id,
             user_id=user_id,
             question=question,
             ai_attempt=ai_attempt,
             confidence_score=confidence_score,
+            category=category,
             status="pending",
         )
         self.db.add(uq)
@@ -47,11 +42,6 @@ class UnresolvedQuestionRepository:
         return uq
 
     async def find_answered_similar(self, question: str) -> Optional[UnresolvedQuestion]:
-        """
-        Search admin-answered questions for one similar to the given question.
-        Uses PostgreSQL full-text search (plainto_tsquery) for matching.
-        Returns the most recently answered match, or None.
-        """
         try:
             fts_query = func.plainto_tsquery("english", question)
             stmt = (
@@ -73,7 +63,6 @@ class UnresolvedQuestionRepository:
             return None
 
     async def list_pending(self) -> List[UnresolvedQuestion]:
-        """Return all questions waiting for an admin answer."""
         result = await self.db.execute(
             select(UnresolvedQuestion)
             .where(UnresolvedQuestion.status == "pending")
@@ -82,10 +71,8 @@ class UnresolvedQuestionRepository:
         return result.scalars().all()
 
     async def list_all(self) -> List[UnresolvedQuestion]:
-        """Return all unresolved questions (any status)."""
         result = await self.db.execute(
-            select(UnresolvedQuestion)
-            .order_by(UnresolvedQuestion.created_at.desc())
+            select(UnresolvedQuestion).order_by(UnresolvedQuestion.created_at.desc())
         )
         return result.scalars().all()
 
@@ -101,7 +88,6 @@ class UnresolvedQuestionRepository:
         admin_id: UUID,
         admin_answer: str,
     ) -> Optional[UnresolvedQuestion]:
-        """Admin provides the answer for an unresolved question."""
         uq = await self.get_by_id(uq_id)
         if not uq:
             return None
@@ -116,11 +102,21 @@ class UnresolvedQuestionRepository:
         return uq
 
     async def ignore(self, uq_id: UUID) -> Optional[UnresolvedQuestion]:
-        """Mark a question as ignored (not worth answering)."""
         uq = await self.get_by_id(uq_id)
         if not uq:
             return None
         uq.status = "ignored"
+        self.db.add(uq)
+        await self.db.commit()
+        await self.db.refresh(uq)
+        return uq
+
+    async def set_status(self, uq_id: UUID, status: str) -> Optional[UnresolvedQuestion]:
+        """Set arbitrary status: under_review, added_to_kb, resolved, etc."""
+        uq = await self.get_by_id(uq_id)
+        if not uq:
+            return None
+        uq.status = status
         self.db.add(uq)
         await self.db.commit()
         await self.db.refresh(uq)

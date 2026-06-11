@@ -9,7 +9,8 @@ from uuid import UUID
 from loguru import logger
 
 from app.db.session import get_db
-from app.api.v1.dev_auth import get_dev_user_id   # ← DEV: swap for get_current_user to restore auth
+from app.core.deps import require_admin
+from app.models.user import User
 from app.repositories.document import DocumentRepository
 from app.repositories.website import WebsiteRepository
 from app.services.document import process_document_pipeline
@@ -26,7 +27,7 @@ router = APIRouter(prefix="/process", tags=["Processing"])
 async def process_document(
     document_id: UUID,
     background_tasks: BackgroundTasks,
-    current_user_id: UUID = Depends(get_dev_user_id),
+    admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):
     repo = DocumentRepository(db)
@@ -51,7 +52,7 @@ async def process_document(
 async def process_website(
     website_id: UUID,
     background_tasks: BackgroundTasks,
-    current_user_id: UUID = Depends(get_dev_user_id),
+    admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):
     repo = WebsiteRepository(db)

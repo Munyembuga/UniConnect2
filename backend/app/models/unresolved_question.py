@@ -37,10 +37,11 @@ class UnresolvedQuestion(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, index=True)
     chat_history_id = Column(UUID(as_uuid=True), ForeignKey("chat_history.id"), nullable=False, index=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
-    question = Column(Text, nullable=False)
-    ai_attempt = Column(Text, nullable=True)
+    question         = Column(Text, nullable=False)
+    ai_attempt       = Column(Text, nullable=True)
     confidence_score = Column(Float, nullable=True)
-    status = Column(String(50), default="pending")  # pending, answered, ignored
+    category         = Column(String(100), nullable=True)
+    status           = Column(String(50), default="pending", index=True)  # pending, answered, ignored, under_review, added_to_kb
     admin_answer = Column(Text, nullable=True)
     answered_by_admin_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)

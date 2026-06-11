@@ -1,6 +1,8 @@
+import time
+from collections import defaultdict
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
@@ -10,45 +12,73 @@ from app.db.session import ping_database
 
 setup_logging()
 
+# ── In-process rate-limit store (resets on restart; use Redis for multi-worker) ──
+_rate_store: dict[str, list[float]] = defaultdict(list)
+_RATE_WINDOW = 60.0  # seconds
+
 
 async def _create_tables() -> None:
-    """Create all database tables if they don't exist yet."""
     try:
         from app.db.database import engine
         from app.db.base import Base
+        from sqlalchemy import text
 
         import app.models.user                 # noqa: F401
         import app.models.document             # noqa: F401
         import app.models.document_chunk       # noqa: F401
         import app.models.chat_history         # noqa: F401
         import app.models.unresolved_question  # noqa: F401
+        import app.models.faq                  # noqa: F401
+        import app.models.settings             # noqa: F401
 
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
 
-        # Migrate: add new enum value and column (each runs independently so one failure won't block the other)
-        from sqlalchemy import text
-        try:
-            async with engine.connect() as conn:
-                await conn.execution_options(isolation_level="AUTOCOMMIT").execute(
-                    text("ALTER TYPE documenttype ADD VALUE IF NOT EXISTS 'url'")
-                )
-        except Exception as e:
-            logger.warning(f"Enum migration (non-fatal): {e}")
-        try:
-            async with engine.begin() as conn:
-                await conn.execute(text(
-                    "ALTER TABLE documents ADD COLUMN IF NOT EXISTS source_url VARCHAR(1000)"
-                ))
-        except Exception as e:
-            logger.warning(f"Column migration (non-fatal): {e}")
-        logger.info("Database tables created / verified successfully")
+        # Safe incremental column/type migrations
+        migrations = [
+            "ALTER TYPE documenttype ADD VALUE IF NOT EXISTS 'url'",
+        ]
+        column_migrations = [
+            "ALTER TABLE documents ADD COLUMN IF NOT EXISTS source_url VARCHAR(1000)",
+            "ALTER TABLE chat_history ADD COLUMN IF NOT EXISTS session_id VARCHAR(100)",
+            "ALTER TABLE chat_history ADD COLUMN IF NOT EXISTS category VARCHAR(100)",
+            "ALTER TABLE chat_history ADD COLUMN IF NOT EXISTS response_time_ms INTEGER",
+            "ALTER TABLE unresolved_questions ADD COLUMN IF NOT EXISTS category VARCHAR(100)",
+        ]
+
+        for stmt in migrations:
+            try:
+                async with engine.connect() as conn:
+                    await conn.execution_options(isolation_level="AUTOCOMMIT").execute(text(stmt))
+            except Exception as e:
+                logger.warning(f"Migration (non-fatal): {e}")
+
+        for stmt in column_migrations:
+            try:
+                async with engine.begin() as conn:
+                    await conn.execute(text(stmt))
+            except Exception as e:
+                logger.warning(f"Column migration (non-fatal): {e}")
+
+        # Indexes for new columns
+        index_migrations = [
+            "CREATE INDEX IF NOT EXISTS ix_chat_history_category ON chat_history(category)",
+            "CREATE INDEX IF NOT EXISTS ix_chat_history_is_resolved ON chat_history(is_resolved)",
+            "CREATE INDEX IF NOT EXISTS ix_unresolved_questions_status ON unresolved_questions(status)",
+        ]
+        for stmt in index_migrations:
+            try:
+                async with engine.begin() as conn:
+                    await conn.execute(text(stmt))
+            except Exception as e:
+                logger.warning(f"Index migration (non-fatal): {e}")
+
+        logger.info("Database tables and migrations applied successfully")
     except Exception as e:
         logger.warning(f"Table creation failed (non-fatal): {e}")
 
 
 async def _seed_admin() -> None:
-    """Create the default admin account if it does not exist yet."""
     ADMIN_EMAIL    = "admin@uniconnect.com"
     ADMIN_PASSWORD = "Admin@1234"
     ADMIN_NAME     = "UniConnect Admin"
@@ -110,17 +140,13 @@ app = FastAPI(
         "|------|-------------|\n"
         "| **Admin** | Upload/list/delete documents, view all chat history, answer unresolved questions |\n"
         "| **Student** | Ask questions, view own chat history |\n\n"
-        "### Flow\n"
-        "1. Admin uploads a document → background pipeline chunks + embeds it\n"
-        "2. Students ask questions → AI searches the knowledge base\n"
-        "3. Low-confidence answers are flagged for admin review\n"
-        "4. Admin answers flagged questions → next student with the same question gets the admin answer\n"
     ),
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
 )
 
+# ── CORS ─────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list or ["*"],
@@ -128,6 +154,29 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ── Rate limiting middleware ──────────────────────────────────────────────────
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next) -> Response:
+    # Only rate-limit the chat ask endpoint to protect AI costs
+    if request.url.path.endswith("/chat/ask") and request.method == "POST":
+        client_ip = request.client.host if request.client else "unknown"
+        now = time.time()
+        window_start = now - _RATE_WINDOW
+        # Purge old timestamps
+        _rate_store[client_ip] = [t for t in _rate_store[client_ip] if t > window_start]
+        limit = settings.RATE_LIMIT_PER_MINUTE
+        if len(_rate_store[client_ip]) >= limit:
+            from fastapi.responses import JSONResponse
+            return JSONResponse(
+                status_code=429,
+                content={"detail": f"Rate limit exceeded. Maximum {limit} requests per minute."},
+                headers={"Retry-After": "60"},
+            )
+        _rate_store[client_ip].append(now)
+    return await call_next(request)
+
 
 app.include_router(api_router)
 

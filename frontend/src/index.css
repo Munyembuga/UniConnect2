@@ -150,3 +150,12 @@
 .wave-bar:nth-child(3) { animation-delay: 0.3s; }
 .wave-bar:nth-child(4) { animation-delay: 0.45s; }
 .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+.wave-bar:nth-child(6) { animation-delay: 0.75s; }
+.wave-bar:nth-child(7) { animation-delay: 0.9s; }
+
+/* ── Toast fade-in ──────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)  scale(1); }
+}
+.animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }

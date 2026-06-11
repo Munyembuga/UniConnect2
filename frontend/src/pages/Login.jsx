@@ -67,11 +67,11 @@ export default function Login() {
               UC
             </div>
             <h1 className="text-2xl font-bold text-slate-ur mb-1">
-              {mode === 'login' ? 'Student Login' : 'Create Account'}
+              {mode === 'login' ? 'Sign In' : 'Create Account'}
             </h1>
             <p className="text-gray-400 text-sm">
               {mode === 'login'
-                ? 'Sign in to ask UniConnect anything'
+                ? 'Sign in to continue'
                 : 'Register to start asking questions'}
             </p>
           </div>

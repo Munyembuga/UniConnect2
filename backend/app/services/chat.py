@@ -8,8 +8,8 @@ Flow for every question:
        a. Vector search  — embed question → ChromaDB semantic search
        b. Keyword search — PostgreSQL full-text search (tsvector/tsquery)
        c. RRF merge      — Reciprocal Rank Fusion combines both result lists
-       d. Gemini — generates grounded answer from merged top chunks
-  3. Save result to chat_history.
+       d. AI — generates grounded answer from merged top chunks
+  3. Save result to chat_history (with response_time_ms + category).
   4. If confidence is low or no answer found → flag as unresolved question for admin.
 """
 import re
@@ -24,6 +24,31 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.services.embeddings import EmbeddingService
 from app.services.chromadb_client import ChromaClient
+
+
+# ---------------------------------------------------------------------------
+# Category classification (shared with admin.py)
+# ---------------------------------------------------------------------------
+
+_CATEGORY_KEYWORDS: Dict[str, List[str]] = {
+    "Admissions":     ["admission", "apply", "application", "entry", "requirement", "enroll", "join", "intake"],
+    "Registration":   ["register", "registration", "semester", "course select", "add course", "drop course", "enrol"],
+    "Scholarships":   ["scholarship", "bursary", "funding", "grant", "financial aid", "sponsorship", "award"],
+    "Fees":           ["fee", "payment", "tuition", "cost", "pay", "invoice", "bill", "money"],
+    "Programs":       ["program", "course", "department", "faculty", "degree", "bachelor", "master", "phd", "diploma", "study"],
+    "Exams":          ["exam", "test", "quiz", "grade", "score", "result", "mark", "assessment", "continuous assessment"],
+    "Accommodation":  ["hostel", "accommodation", "housing", "dormitory", "residence", "room"],
+    "Campus Life":    ["campus", "library", "facility", "laboratory", "clinic", "health", "sports", "cafeteria", "internet", "wifi"],
+    "Administration": ["transcript", "certificate", "document", "letter", "form", "request", "office", "administration", "record"],
+}
+
+
+def categorize_question(question: str) -> str:
+    q = question.lower()
+    for category, keywords in _CATEGORY_KEYWORDS.items():
+        if any(kw in q for kw in keywords):
+            return category
+    return "Other"
 
 
 # ---------------------------------------------------------------------------
@@ -61,7 +86,6 @@ def _is_general_question(question: str) -> bool:
 
 
 def _static_fallback(question: str, today: str) -> str:
-    """Canned answer when all AI providers are unreachable."""
     q = question.lower()
     if any(w in q for w in ["date", "day", "time"]):
         return f"Today is {today}."
@@ -85,10 +109,8 @@ def _static_fallback(question: str, today: str) -> str:
 
 
 def _answer_general_question(question: str) -> dict:
-    """Answer a conversational question — tries AI, falls back to static."""
     today = date.today().strftime("%A, %B %d, %Y")
     fallback = _static_fallback(question, today)
-
     prompt = (
         f"You are UniConnect, a friendly AI assistant for university students. "
         f"Today's date is {today}.\n\n"
@@ -125,11 +147,6 @@ _GEMINI_FALLBACK_MODELS = [
 
 
 def _call_gemini(prompt: str, retries: int = 3) -> str:
-    """
-    Call Gemini generateContent via direct REST API (v1beta).
-    Retries on 429 (rate limit) and 503 (overload), then falls back to
-    alternative models if the primary model keeps failing.
-    """
     import requests as _requests
 
     models_to_try = [settings.GEMINI_MODEL] + [
@@ -137,7 +154,7 @@ def _call_gemini(prompt: str, retries: int = 3) -> str:
     ]
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 1024},
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 4096},
     }
 
     last_exc = None
@@ -170,7 +187,6 @@ def _call_gemini(prompt: str, retries: int = 3) -> str:
 
 
 def _call_openrouter(prompt: str) -> str:
-    """Call OpenRouter chat completions (OpenAI-compatible API)."""
     import openai as _openai
 
     if not settings.OPENROUTER_API_KEY:
@@ -184,7 +200,7 @@ def _call_openrouter(prompt: str) -> str:
         model=settings.OPENROUTER_MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,
-        max_tokens=1024,
+        max_tokens=4096,
     )
     return response.choices[0].message.content.strip()
 
@@ -226,23 +242,16 @@ async def ask_question(
     question: str,
     user_id: UUID,
     db: AsyncSession,
+    session_id: Optional[str] = None,
 ) -> dict:
-    """
-    Route the question through the full pipeline and save results.
-
-    Args:
-        question:  The student's question.
-        user_id:   ID of the authenticated user asking the question.
-        db:        Async DB session (used for chat history + unresolved questions).
-
-    Returns:
-        dict with keys: answer, sources, confidence, error, answered_by
-    """
     from app.repositories.chat_history import ChatHistoryRepository
     from app.repositories.unresolved_question import UnresolvedQuestionRepository
 
     ch_repo = ChatHistoryRepository(db)
     uq_repo = UnresolvedQuestionRepository(db)
+
+    t_start = time.monotonic()
+    category = categorize_question(question)
 
     # ── 0. Check admin-answered questions ────────────────────────────────────
     try:
@@ -251,6 +260,7 @@ async def ask_question(
         admin_match = None
 
     if admin_match:
+        elapsed_ms = int((time.monotonic() - t_start) * 1000)
         logger.info(f"Returning admin answer for: '{question[:60]}'")
         await ch_repo.create(
             user_id=user_id,
@@ -259,6 +269,9 @@ async def ask_question(
             sources=[],
             confidence_score=1.0,
             is_resolved="resolved",
+            session_id=session_id,
+            category=category,
+            response_time_ms=elapsed_ms,
         )
         return {
             "answer": admin_match.admin_answer,
@@ -272,6 +285,7 @@ async def ask_question(
     if _is_general_question(question):
         logger.info(f"General question detected, skipping RAG: '{question[:60]}'")
         result = _answer_general_question(question)
+        elapsed_ms = int((time.monotonic() - t_start) * 1000)
         await ch_repo.create(
             user_id=user_id,
             question=question,
@@ -279,6 +293,9 @@ async def ask_question(
             sources=[],
             confidence_score=1.0,
             is_resolved="resolved",
+            session_id=session_id,
+            category="General",
+            response_time_ms=elapsed_ms,
         )
         return result
 
@@ -311,6 +328,7 @@ async def ask_question(
         logger.info(f"Vector search: {len(vector_docs)} relevant chunks (best={best_similarity:.0%})")
 
     except RuntimeError:
+        elapsed_ms = int((time.monotonic() - t_start) * 1000)
         return {
             "answer": None, "sources": [], "confidence": 0.0,
             "error": "Embedding service not configured. Add GEMINI_API_KEY or OPENAI_API_KEY and restart.",
@@ -336,6 +354,7 @@ async def ask_question(
             "No relevant content found in the knowledge base. "
             "Please make sure a document has been uploaded and fully processed."
         )
+        elapsed_ms = int((time.monotonic() - t_start) * 1000)
         chat = await ch_repo.create(
             user_id=user_id,
             question=question,
@@ -343,6 +362,9 @@ async def ask_question(
             sources=[],
             confidence_score=best_similarity,
             is_resolved="unresolved",
+            session_id=session_id,
+            category=category,
+            response_time_ms=elapsed_ms,
         )
         await uq_repo.create(
             chat_history_id=chat.id,
@@ -350,6 +372,7 @@ async def ask_question(
             question=question,
             ai_attempt=no_answer,
             confidence_score=best_similarity,
+            category=category,
         )
         return {
             "answer": no_answer,
@@ -358,9 +381,9 @@ async def ask_question(
         }
 
     # ── 5. Merge with RRF ────────────────────────────────────────────────────
-    merged = _reciprocal_rank_fusion(vector_docs, keyword_results, top_n=5)
+    merged = _reciprocal_rank_fusion(vector_docs, keyword_results, top_n=8)
     if not merged:
-        merged = vector_docs[:5] or [doc for doc, _ in keyword_results[:5]]
+        merged = vector_docs[:8] or [doc for doc, _ in keyword_results[:8]]
     logger.info(
         f"Hybrid search merged {len(merged)} chunks "
         f"(vector={len(vector_docs)}, keyword={len(keyword_results)})"
@@ -379,10 +402,12 @@ async def ask_question(
         "- Analyse the context carefully and synthesise the information — do NOT just copy or paste text.\n"
         "- Use your reasoning to explain concepts, steps, or findings in your own words.\n"
         "- Structure your answer clearly:\n"
+        "  • For lists (programs, courses, requirements, etc.): provide the COMPLETE list — do not truncate or summarise, include every item found in the context.\n"
         "  • For procedures/steps: use a numbered list.\n"
         "  • For explanations/concepts: use short paragraphs or bullet points.\n"
         "  • For simple factual questions (name, date, number): one concise sentence.\n"
         "- Write in plain, clear language that a student can easily understand.\n"
+        "- COMPLETENESS: If the question asks for a list, you MUST include every item present in the context. Never stop early or say 'and more'.\n"
         "- Do NOT copy large raw text chunks from the context.\n"
         "- Do NOT repeat or rephrase the question.\n"
         "- ONLY use information found in the provided context — do not add outside knowledge.\n"
@@ -401,22 +426,27 @@ async def ask_question(
         logger.error(f"AI generation failed: {e}")
         ai_error = f"AI generation failed: {e}"
 
+    elapsed_ms = int((time.monotonic() - t_start) * 1000)
+
     # ── 7. Determine resolution status ───────────────────────────────────────
     is_unresolved = (
         answer is None
         or best_similarity < settings.CONFIDENCE_THRESHOLD
         or (answer and "could not find" in answer.lower())
     )
-    is_resolved = "unresolved" if is_unresolved else "resolved"
+    is_resolved_status = "unresolved" if is_unresolved else "resolved"
 
     # ── 8. Save to chat history ───────────────────────────────────────────────
     chat = await ch_repo.create(
         user_id=user_id,
         question=question,
         answer=answer,
-        sources=merged[:3],
+        sources=merged[:5],
         confidence_score=best_similarity,
-        is_resolved=is_resolved,
+        is_resolved=is_resolved_status,
+        session_id=session_id,
+        category=category,
+        response_time_ms=elapsed_ms,
     )
 
     # ── 9. Flag as unresolved if needed ──────────────────────────────────────
@@ -428,6 +458,7 @@ async def ask_question(
                 question=question,
                 ai_attempt=answer,
                 confidence_score=best_similarity,
+                category=category,
             )
             logger.info(f"Question flagged as unresolved for admin review: '{question[:60]}'")
         except Exception as e:

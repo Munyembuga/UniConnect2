@@ -22,8 +22,10 @@ class ChatHistoryRepository:
         sources: Optional[list],
         confidence_score: Optional[float],
         is_resolved: str = "resolved",
+        session_id: Optional[str] = None,
+        category: Optional[str] = None,
+        response_time_ms: Optional[int] = None,
     ) -> ChatHistory:
-        """Save a new chat exchange to the database."""
         chat = ChatHistory(
             user_id=user_id,
             question=question,
@@ -31,6 +33,9 @@ class ChatHistoryRepository:
             sources=sources or [],
             confidence_score=confidence_score,
             is_resolved=is_resolved,
+            session_id=session_id,
+            category=category,
+            response_time_ms=response_time_ms,
         )
         self.db.add(chat)
         await self.db.flush()
@@ -40,7 +45,6 @@ class ChatHistoryRepository:
         return chat
 
     async def get_by_user(self, user_id: UUID, limit: int = 50) -> List[ChatHistory]:
-        """Return recent chat history for a specific user."""
         result = await self.db.execute(
             select(ChatHistory)
             .where(ChatHistory.user_id == user_id)
@@ -49,8 +53,7 @@ class ChatHistoryRepository:
         )
         return result.scalars().all()
 
-    async def get_all(self, limit: int = 200) -> List[ChatHistory]:
-        """Return all chat history (admin view)."""
+    async def get_all(self, limit: int = 500) -> List[ChatHistory]:
         result = await self.db.execute(
             select(ChatHistory)
             .order_by(ChatHistory.created_at.desc())

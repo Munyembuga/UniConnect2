@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Send, Mic, MicOff, Volume2, RotateCcw, ChevronDown, ArrowLeft, Sparkles } from 'lucide-react'
+import { Send, Mic, MicOff, Square, Volume2, RotateCcw, ChevronDown, ArrowLeft, Sparkles, X, RefreshCw } from 'lucide-react'
 import { askQuestion, getToken, clearAuth } from '../services/api'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -172,192 +172,184 @@ function MessageBubble({ msg }) {
   )
 }
 
+/* ── Animated mic icon ── */
+function MicIcon({ active }) {
+  return (
+    <span className="relative flex items-center justify-center w-full h-full">
+      {active && (
+        <>
+          <span className="absolute inset-0 rounded-full bg-teal-400/30 animate-ping" />
+          <span className="absolute inset-1 rounded-full bg-teal-400/20 animate-ping" style={{ animationDelay: '150ms' }} />
+        </>
+      )}
+      <Mic size={20} />
+    </span>
+  )
+}
+
+/* ── Waveform bars ── */
+function Waveform() {
+  return (
+    <div className="flex items-end gap-0.5 h-5">
+      {[3, 6, 4, 7, 3, 5, 4].map((h, i) => (
+        <span
+          key={i}
+          className="wave-bar w-1 bg-teal-500 rounded-full"
+          style={{ height: `${h * 3}px`, animationDelay: `${i * 80}ms` }}
+        />
+      ))}
+    </div>
+  )
+}
+
+/* ── Recording timer ── */
+function useTimer(active) {
+  const [seconds, setSeconds] = useState(0)
+  const ref = useRef(null)
+  useEffect(() => {
+    if (active) {
+      setSeconds(0)
+      ref.current = setInterval(() => setSeconds(s => s + 1), 1000)
+    } else {
+      clearInterval(ref.current)
+    }
+    return () => clearInterval(ref.current)
+  }, [active])
+  const mm = String(Math.floor(seconds / 60)).padStart(2, '0')
+  const ss = String(seconds % 60).padStart(2, '0')
+  return `${mm}:${ss}`
+}
+
 /* ── Main Chat page ── */
 export default function Chat() {
-  const [messages, setMessages]       = useState([GREETING])
-  const [input, setInput]             = useState('')
-  const [isTyping, setIsTyping]       = useState(false)
-  const [isRecording, setIsRecording] = useState(false)
+  const [messages, setMessages]         = useState([GREETING])
+  const [input, setInput]               = useState('')
+  const [isTyping, setIsTyping]         = useState(false)
+  const [recordState, setRecordState]   = useState('idle') // idle | recording | done
   const [showSuggestions, setShowSuggestions] = useState(true)
   const navigate = useNavigate()
 
-  /* Redirect to login if not authenticated */
-  useEffect(() => {
-    if (!getToken()) navigate('/login', { replace: true })
-  }, [])
-
-  /* Refs for voice — state in closures won't update, refs do */
   const isRecordingRef  = useRef(false)
   const recognitionRef  = useRef(null)
   const accumulatedRef  = useRef('')
+  const savedInputRef   = useRef('')       // text before recording started
   const bottomRef       = useRef(null)
   const textareaRef     = useRef(null)
 
-  /* Keep ref in sync with state */
-  const setRecording = (val) => {
-    isRecordingRef.current = val
-    setIsRecording(val)
-  }
+  const timer = useTimer(recordState === 'recording')
 
-  /* Auto-scroll on new messages */
+  useEffect(() => { if (!getToken()) navigate('/login', { replace: true }) }, [])
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, isTyping])
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isTyping])
-
-  /* Auto-resize textarea */
-  useEffect(() => {
-    const el = textareaRef.current
-    if (!el) return
+    const el = textareaRef.current; if (!el) return
     el.style.height = 'auto'
     el.style.height = Math.min(el.scrollHeight, 128) + 'px'
   }, [input])
 
-  /* ── Send message ── */
   const sendMessage = async (text) => {
-    const trimmed = text.trim()
-    if (!trimmed) return
+    const trimmed = text.trim(); if (!trimmed) return
+    if (isRecordingRef.current) stopRecording(false)
 
-    /* Stop recording if active */
-    if (isRecordingRef.current) stopRecording()
-
-    const userMsg = {
-      id: Date.now(),
-      role: 'user',
-      text: trimmed,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    }
+    const userMsg = { id: Date.now(), role: 'user', text: trimmed, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
     setMessages(prev => [...prev, userMsg])
-    setInput('')
-    setShowSuggestions(false)
-    setIsTyping(true)
-
+    setInput(''); setShowSuggestions(false); setIsTyping(true)
     try {
       const data = await askQuestion(trimmed)
-      const botText = data.answer || "I couldn't find an answer in the knowledge base."
-      const source  = data.sources?.length ? 'Knowledge Base' : null
       setIsTyping(false)
       setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        role: 'assistant',
-        text: botText,
-        source,
+        id: Date.now() + 1, role: 'assistant',
+        text: data.answer || "I couldn't find an answer in the knowledge base.",
+        source: data.sources?.length ? 'Knowledge Base' : null,
         confidence: data.confidence,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }])
     } catch (err) {
       setIsTyping(false)
-      if (err.status === 401) {
-        clearAuth()
-        navigate('/login', { replace: true })
-        return
-      }
+      if (err.status === 401) { clearAuth(); navigate('/login', { replace: true }); return }
       setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        role: 'assistant',
+        id: Date.now() + 1, role: 'assistant',
         text: `Sorry, something went wrong: ${err.message}`,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }])
     }
   }
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage(input)
+  const handleKeyDown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input) } }
+
+  const stopRecording = (keepText = true) => {
+    isRecordingRef.current = false
+    try { recognitionRef.current?.stop() } catch (_) {}
+    recognitionRef.current = null
+    if (!keepText) {
+      setInput(savedInputRef.current)
+      accumulatedRef.current = ''
+      setRecordState('idle')
+    } else {
+      setRecordState('done')
     }
   }
 
-  /* ── Voice: stop ── */
-  const stopRecording = () => {
-    /* Set ref BEFORE calling stop() so the onend handler doesn't restart */
-    isRecordingRef.current = false
-    setIsRecording(false)
-    try { recognitionRef.current?.stop() } catch (_) {}
-    recognitionRef.current = null
+  const cancelRecording = () => stopRecording(false)
+
+  const retryRecording = () => {
+    setInput(savedInputRef.current)
+    accumulatedRef.current = ''
+    setRecordState('idle')
+    setTimeout(() => startRecording(), 50)
   }
 
-  /* ── Voice: start ── */
   const startRecording = () => {
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SpeechRec) {
-      alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.')
+      alert('Voice input requires Chrome or Edge browser.')
       return
     }
+    savedInputRef.current = input.trim()
+    accumulatedRef.current = input.trim() ? input.trim() + ' ' : ''
 
     const recognition = new SpeechRec()
-    recognition.lang            = 'en-US'
-    recognition.continuous      = true   /* keep listening until explicitly stopped */
-    recognition.interimResults  = true   /* show partial results in real time */
-    recognition.maxAlternatives = 1
-
-    /* Start fresh, but keep any text already typed */
-    accumulatedRef.current = input.trim() ? input.trim() + ' ' : ''
+    recognition.lang = 'en-US'; recognition.continuous = true; recognition.interimResults = true; recognition.maxAlternatives = 1
 
     recognition.onresult = (e) => {
       let interim = ''
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) {
-          accumulatedRef.current += e.results[i][0].transcript + ' '
-        } else {
-          interim += e.results[i][0].transcript
-        }
+        if (e.results[i].isFinal) accumulatedRef.current += e.results[i][0].transcript + ' '
+        else interim += e.results[i][0].transcript
       }
-      /* Show accumulated + live interim text in the input */
       setInput(accumulatedRef.current + interim)
     }
-
     recognition.onerror = (e) => {
-      /* 'aborted' means we called stop() — ignore it */
       if (e.error === 'aborted') return
-      /* Any other error: stop cleanly */
       isRecordingRef.current = false
-      setIsRecording(false)
+      setRecordState('idle')
       recognitionRef.current = null
     }
-
     recognition.onend = () => {
-      /* If the browser stopped due to silence but user hasn't pressed Stop — restart */
       if (isRecordingRef.current) {
-        try { recognition.start() } catch (_) { /* ignore race-condition errors */ }
+        try { recognition.start() } catch (_) {}
       }
     }
 
     recognitionRef.current = recognition
-    setRecording(true)
+    isRecordingRef.current = true
+    setRecordState('recording')
     recognition.start()
   }
 
-  const toggleRecording = () => {
-    if (isRecordingRef.current) {
-      stopRecording()
-    } else {
-      startRecording()
-    }
+  const clearChat = () => {
+    if (isRecordingRef.current) stopRecording(false)
+    setMessages([GREETING]); setShowSuggestions(true); setInput(''); setRecordState('idle')
   }
 
-  const clearChat = () => {
-    if (isRecordingRef.current) stopRecording()
-    setMessages([GREETING])
-    setShowSuggestions(true)
-    setInput('')
-  }
+  const isRecording = recordState === 'recording'
+  const isDone      = recordState === 'done'
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* ── Header ── */}
       <header className="bg-primary text-white px-4 sm:px-6 py-3.5 flex items-center gap-4 shadow-lg shrink-0 z-10">
-        <Link
-          to="/"
-          className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-white/80 hover:text-white"
-          title="Back to home"
-        >
-          <ArrowLeft size={20} />
-        </Link>
-
-        <div className="w-10 h-10 rounded-full bg-white/15 border border-white/20 flex items-center justify-center font-bold text-sm shrink-0">
-          UC
-        </div>
-
+        <Link to="/" className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-white/80 hover:text-white" title="Back to home"><ArrowLeft size={20} /></Link>
+        <div className="w-10 h-10 rounded-full bg-white/15 border border-white/20 flex items-center justify-center font-bold text-sm shrink-0">UC</div>
         <div className="flex-1 min-w-0">
           <div className="font-semibold">UniConnect</div>
           <div className="text-primary-100 text-xs flex items-center gap-1.5">
@@ -365,68 +357,70 @@ export default function Chat() {
             Online · University of Rwanda Assistant
           </div>
         </div>
-
-        <button
-          onClick={clearChat}
-          title="New conversation"
-          className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-        >
-          <RotateCcw size={17} />
-        </button>
+        <button onClick={clearChat} title="New conversation" className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"><RotateCcw size={17} /></button>
       </header>
 
       {/* ── Messages ── */}
       <div className="flex-1 overflow-y-auto chat-bg">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
-          {messages.map(msg => (
-            <MessageBubble key={msg.id} msg={msg} />
-          ))}
-
+          {messages.map(msg => <MessageBubble key={msg.id} msg={msg} />)}
           {isTyping && <TypingIndicator />}
 
-          {/* Suggested questions */}
           {showSuggestions && messages.length === 1 && (
             <div className="mt-4 mb-2">
               <p className="text-xs text-gray-500 font-semibold mb-3 flex items-center gap-1.5 uppercase tracking-wide">
-                <ChevronDown size={13} />
-                Suggested questions
+                <ChevronDown size={13} /> Suggested questions
               </p>
               <div className="flex flex-wrap gap-2">
                 {SUGGESTIONS.map(q => (
-                  <button
-                    key={q}
-                    onClick={() => sendMessage(q)}
-                    className="text-xs px-4 py-2 bg-white border-2 border-primary/20 text-primary rounded-full
-                               hover:bg-primary hover:text-white hover:border-primary transition-all duration-150
-                               font-medium shadow-sm hover:shadow-md text-left"
-                  >
+                  <button key={q} onClick={() => sendMessage(q)}
+                    className="text-xs px-4 py-2 bg-white border-2 border-primary/20 text-primary rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all duration-150 font-medium shadow-sm hover:shadow-md text-left">
                     {q}
                   </button>
                 ))}
               </div>
             </div>
           )}
-
           <div ref={bottomRef} className="h-2" />
         </div>
       </div>
 
       {/* ── Input bar ── */}
-      <div className="bg-white border-t-2 border-gray-200 shrink-0 z-10">
+      <div className="bg-white border-t-2 border-gray-100 shrink-0 z-10">
         {/* Recording indicator strip */}
         {isRecording && (
-          <div className="bg-red-50 border-b border-red-100 px-4 py-2 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0" />
-            <span className="text-xs font-semibold text-red-600">Recording…  Speak now, tap Stop when done</span>
-            {/* Live waveform bars */}
-            <div className="flex items-end gap-0.5 h-4 ml-auto">
-              {[3, 5, 4, 6, 3].map((h, i) => (
-                <span
-                  key={i}
-                  className="wave-bar w-1 bg-red-400 rounded-full"
-                  style={{ height: `${h * 3}px` }}
-                />
-              ))}
+          <div className="bg-teal-50 border-b border-teal-100 px-4 py-2 flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse shrink-0" />
+            <span className="text-xs font-semibold text-teal-700">Listening…</span>
+            <span className="text-xs font-mono text-teal-600 tabular-nums">{timer}</span>
+            <Waveform />
+            <div className="ml-auto flex items-center gap-2">
+              <button onClick={cancelRecording}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-gray-500 text-xs hover:bg-gray-50 hover:text-gray-700 transition-colors">
+                <X size={12} /> Cancel
+              </button>
+              <button onClick={() => stopRecording(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-500 text-white text-xs hover:bg-teal-600 transition-colors">
+                <Square size={11} /> Stop
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Post-recording action strip */}
+        {isDone && input.trim() && (
+          <div className="bg-slate-50 border-b border-slate-100 px-4 py-2 flex items-center gap-3">
+            <CheckIcon />
+            <span className="text-xs font-medium text-slate-600">Voice captured. Ready to send.</span>
+            <div className="ml-auto flex items-center gap-2">
+              <button onClick={retryRecording}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-gray-500 text-xs hover:bg-gray-50 transition-colors">
+                <RefreshCw size={11} /> Retry
+              </button>
+              <button onClick={() => { setInput(''); setRecordState('idle') }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-gray-200 text-gray-500 text-xs hover:bg-gray-50 transition-colors">
+                <X size={11} /> Clear
+              </button>
             </div>
           </div>
         )}
@@ -435,20 +429,20 @@ export default function Chat() {
           {/* Voice button */}
           <div className="flex flex-col items-center gap-1 shrink-0">
             <button
-              onClick={toggleRecording}
-              title={isRecording ? 'Tap to stop recording' : 'Tap to record voice'}
+              onClick={isRecording ? () => stopRecording(true) : startRecording}
+              title={isRecording ? 'Stop recording' : 'Record voice input'}
               className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
                 isRecording
-                  ? 'bg-red-500 text-white border-2 border-red-600 recording-pulse'
+                  ? 'bg-teal-500 text-white border-2 border-teal-600 shadow-teal-200 shadow-lg'
+                  : isDone
+                  ? 'bg-teal-100 text-teal-600 border-2 border-teal-200'
                   : 'bg-primary/10 text-primary border-2 border-primary/30 hover:bg-primary hover:text-white hover:border-primary'
               }`}
             >
-              {isRecording ? <MicOff size={20} /> : <Mic size={20} />}
+              {isRecording ? <MicIcon active={true} /> : <Mic size={20} />}
             </button>
-            <span className={`text-[10px] font-bold uppercase tracking-wide ${
-              isRecording ? 'text-red-500' : 'text-gray-400'
-            }`}>
-              {isRecording ? 'Stop' : 'Voice'}
+            <span className={`text-[10px] font-bold uppercase tracking-wide ${isRecording ? 'text-teal-600' : 'text-gray-400'}`}>
+              {isRecording ? timer : 'Voice'}
             </span>
           </div>
 
@@ -457,7 +451,7 @@ export default function Chat() {
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={e => { setInput(e.target.value); if (isDone) setRecordState('idle') }}
               onKeyDown={handleKeyDown}
               placeholder={isRecording ? 'Listening — your words will appear here…' : 'Type your question… (Enter to send)'}
               rows={1}
@@ -469,10 +463,10 @@ export default function Chat() {
           <div className="flex flex-col items-center gap-1 shrink-0">
             <button
               onClick={() => sendMessage(input)}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isRecording}
               title="Send message"
               className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
-                input.trim()
+                input.trim() && !isRecording
                   ? 'bg-primary text-white border-2 border-primary-dark hover:bg-primary-dark shadow-md hover:shadow-lg active:scale-95'
                   : 'bg-gray-100 text-gray-300 border-2 border-gray-200 cursor-not-allowed'
               }`}
@@ -489,4 +483,8 @@ export default function Chat() {
       </div>
     </div>
   )
+}
+
+function CheckIcon() {
+  return <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-teal-500 shrink-0"><circle cx="7" cy="7" r="7" fill="currentColor" opacity="0.15"/><path d="M4 7l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
 }
