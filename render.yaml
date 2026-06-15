@@ -144,6 +144,6 @@ services:
 # ── Managed PostgreSQL database ───────────────────────────────────────────────
 databases:
   - name: uniconnect-db
-    plan: starter
+    plan: free
     databaseName: uniconnect_db
     user: uniconnect
