@@ -189,3 +189,9 @@ async def root() -> dict[str, str]:
         "docs": "/docs",
         "health": "/api/v1/health",
     }
+
+
+@app.get("/health", include_in_schema=False)
+async def health_shortcut() -> dict[str, str]:
+    """Short-path alias used by some health checkers."""
+    return {"status": "ok"}

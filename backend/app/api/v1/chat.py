@@ -9,7 +9,7 @@ from typing import Optional, List
 from loguru import logger
 
 from app.db.session import get_db
-from app.core.deps import get_current_user
+from app.core.deps import get_current_user, get_optional_user
 from app.models.user import User
 from app.services.chat import ask_question
 
@@ -71,11 +71,11 @@ def _truncate_sources(sources: List[str], max_chars: int = 180) -> List[str]:
 )
 async def ask(
     body: AskRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),
     db: AsyncSession = Depends(get_db),
 ) -> AskResponse:
     try:
-        result = await ask_question(body.question, current_user.id, db)
+        result = await ask_question(body.question, current_user.id if current_user else None, db)
         return AskResponse(
             question=body.question,
             answer=result["answer"],

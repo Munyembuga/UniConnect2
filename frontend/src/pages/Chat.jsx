@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Send, Mic, MicOff, Square, Volume2, RotateCcw, ChevronDown, ArrowLeft, Sparkles, X, RefreshCw } from 'lucide-react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Send, Mic, MicOff, Square, Volume2, RotateCcw, ChevronDown, ArrowLeft, Sparkles, X, RefreshCw, LogIn } from 'lucide-react'
 import { askQuestion, getToken, clearAuth } from '../services/api'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -227,18 +227,29 @@ export default function Chat() {
   const [isTyping, setIsTyping]         = useState(false)
   const [recordState, setRecordState]   = useState('idle') // idle | recording | done
   const [showSuggestions, setShowSuggestions] = useState(true)
+  const isGuest = !getToken()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const isRecordingRef  = useRef(false)
   const recognitionRef  = useRef(null)
   const accumulatedRef  = useRef('')
-  const savedInputRef   = useRef('')       // text before recording started
+  const savedInputRef   = useRef('')
   const bottomRef       = useRef(null)
   const textareaRef     = useRef(null)
+  const autoSentRef     = useRef(false)
 
   const timer = useTimer(recordState === 'recording')
 
-  useEffect(() => { if (!getToken()) navigate('/login', { replace: true }) }, [])
+  // Auto-send question from URL ?q= param
+  useEffect(() => {
+    const q = searchParams.get('q')
+    if (q && !autoSentRef.current) {
+      autoSentRef.current = true
+      setTimeout(() => sendMessage(q), 300)
+    }
+  }, [])
+
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, isTyping])
   useEffect(() => {
     const el = textareaRef.current; if (!el) return
@@ -265,7 +276,7 @@ export default function Chat() {
       }])
     } catch (err) {
       setIsTyping(false)
-      if (err.status === 401) { clearAuth(); navigate('/login', { replace: true }); return }
+      if (err.status === 401 && !isGuest) { clearAuth(); navigate('/login', { replace: true }); return }
       setMessages(prev => [...prev, {
         id: Date.now() + 1, role: 'assistant',
         text: `Sorry, something went wrong: ${err.message}`,
@@ -358,7 +369,20 @@ export default function Chat() {
           </div>
         </div>
         <button onClick={clearChat} title="New conversation" className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"><RotateCcw size={17} /></button>
+        {isGuest && (
+          <Link to="/login" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs font-medium transition-colors shrink-0">
+            <LogIn size={13} /> Sign in to save history
+          </Link>
+        )}
       </header>
+
+      {/* Guest mobile hint */}
+      {isGuest && (
+        <div className="bg-primary/5 border-b border-primary/10 px-4 py-2 flex items-center justify-between sm:hidden">
+          <span className="text-xs text-slate-ur">Guest mode — answers not saved</span>
+          <Link to="/login" className="text-xs font-semibold text-primary flex items-center gap-1"><LogIn size={12} /> Sign in</Link>
+        </div>
+      )}
 
       {/* ── Messages ── */}
       <div className="flex-1 overflow-y-auto chat-bg">

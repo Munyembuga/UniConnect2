@@ -85,6 +85,25 @@ async def get_current_user(
     return user
 
 
+async def get_optional_user(
+    credentials: HTTPAuthorizationCredentials = Depends(_bearer_scheme),
+    db: AsyncSession = Depends(get_db),
+) -> User | None:
+    """Like get_current_user but returns None instead of raising 401."""
+    if not credentials or not credentials.credentials:
+        return None
+    try:
+        payload = decode_access_token(credentials.credentials)
+        if not payload:
+            return None
+        user_id = UUID(payload.get("sub", ""))
+        repo = UserRepository(db)
+        user = await repo.get_user_by_id(user_id)
+        return user if user and user.is_active else None
+    except Exception:
+        return None
+
+
 async def require_admin(current_user: User = Depends(get_current_user)) -> User:
     """
     Require the authenticated user to have the ADMIN role.

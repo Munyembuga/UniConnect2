@@ -186,6 +186,13 @@ def _call_gemini(prompt: str, retries: int = 3) -> str:
     raise last_exc or RuntimeError("All Gemini models failed")
 
 
+_OPENROUTER_FALLBACK_MODELS = [
+    "google/gemini-2.5-flash",
+    "google/gemma-3-27b-it",
+    "openai/gpt-4o-mini",
+]
+
+
 def _call_openrouter(prompt: str) -> str:
     import openai as _openai
 
@@ -196,13 +203,31 @@ def _call_openrouter(prompt: str) -> str:
         api_key=settings.OPENROUTER_API_KEY,
         base_url="https://openrouter.ai/api/v1",
     )
-    response = client.chat.completions.create(
-        model=settings.OPENROUTER_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3,
-        max_tokens=4096,
-    )
-    return response.choices[0].message.content.strip()
+    models_to_try = [settings.OPENROUTER_MODEL] + [
+        m for m in _OPENROUTER_FALLBACK_MODELS if m != settings.OPENROUTER_MODEL
+    ]
+    last_exc: Exception | None = None
+    for model in models_to_try:
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=4096,
+            )
+            content = response.choices[0].message.content
+            if not content:
+                last_exc = RuntimeError(f"Empty response from {model}")
+                logger.warning(f"OpenRouter empty content on {model} — trying next model")
+                continue
+            if model != settings.OPENROUTER_MODEL:
+                logger.info(f"Used OpenRouter fallback model: {model}")
+            return content.strip()
+        except Exception as e:
+            last_exc = e
+            logger.warning(f"OpenRouter {model} failed ({e}) — trying next model")
+            continue
+    raise last_exc or RuntimeError("All OpenRouter models failed")
 
 
 def _call_ai(prompt: str) -> str:
@@ -240,7 +265,7 @@ def _reciprocal_rank_fusion(
 
 async def ask_question(
     question: str,
-    user_id: UUID,
+    user_id: Optional[UUID],
     db: AsyncSession,
     session_id: Optional[str] = None,
 ) -> dict:
@@ -262,17 +287,18 @@ async def ask_question(
     if admin_match:
         elapsed_ms = int((time.monotonic() - t_start) * 1000)
         logger.info(f"Returning admin answer for: '{question[:60]}'")
-        await ch_repo.create(
-            user_id=user_id,
-            question=question,
-            answer=admin_match.admin_answer,
-            sources=[],
-            confidence_score=1.0,
-            is_resolved="resolved",
-            session_id=session_id,
-            category=category,
-            response_time_ms=elapsed_ms,
-        )
+        if user_id:
+            await ch_repo.create(
+                user_id=user_id,
+                question=question,
+                answer=admin_match.admin_answer,
+                sources=[],
+                confidence_score=1.0,
+                is_resolved="resolved",
+                session_id=session_id,
+                category=category,
+                response_time_ms=elapsed_ms,
+            )
         return {
             "answer": admin_match.admin_answer,
             "sources": [],
@@ -286,17 +312,18 @@ async def ask_question(
         logger.info(f"General question detected, skipping RAG: '{question[:60]}'")
         result = _answer_general_question(question)
         elapsed_ms = int((time.monotonic() - t_start) * 1000)
-        await ch_repo.create(
-            user_id=user_id,
-            question=question,
-            answer=result["answer"],
-            sources=[],
-            confidence_score=1.0,
-            is_resolved="resolved",
-            session_id=session_id,
-            category="General",
-            response_time_ms=elapsed_ms,
-        )
+        if user_id:
+            await ch_repo.create(
+                user_id=user_id,
+                question=question,
+                answer=result["answer"],
+                sources=[],
+                confidence_score=1.0,
+                is_resolved="resolved",
+                session_id=session_id,
+                category="General",
+                response_time_ms=elapsed_ms,
+            )
         return result
 
     # ── 2. Vector search (ChromaDB) ──────────────────────────────────────────
@@ -355,25 +382,26 @@ async def ask_question(
             "Please make sure a document has been uploaded and fully processed."
         )
         elapsed_ms = int((time.monotonic() - t_start) * 1000)
-        chat = await ch_repo.create(
-            user_id=user_id,
-            question=question,
-            answer=no_answer,
-            sources=[],
-            confidence_score=best_similarity,
-            is_resolved="unresolved",
-            session_id=session_id,
-            category=category,
-            response_time_ms=elapsed_ms,
-        )
-        await uq_repo.create(
-            chat_history_id=chat.id,
-            user_id=user_id,
-            question=question,
-            ai_attempt=no_answer,
-            confidence_score=best_similarity,
-            category=category,
-        )
+        if user_id:
+            chat = await ch_repo.create(
+                user_id=user_id,
+                question=question,
+                answer=no_answer,
+                sources=[],
+                confidence_score=best_similarity,
+                is_resolved="unresolved",
+                session_id=session_id,
+                category=category,
+                response_time_ms=elapsed_ms,
+            )
+            await uq_repo.create(
+                chat_history_id=chat.id,
+                user_id=user_id,
+                question=question,
+                ai_attempt=no_answer,
+                confidence_score=best_similarity,
+                category=category,
+            )
         return {
             "answer": no_answer,
             "sources": [], "confidence": best_similarity, "error": None,
@@ -436,33 +464,34 @@ async def ask_question(
     )
     is_resolved_status = "unresolved" if is_unresolved else "resolved"
 
-    # ── 8. Save to chat history ───────────────────────────────────────────────
-    chat = await ch_repo.create(
-        user_id=user_id,
-        question=question,
-        answer=answer,
-        sources=merged[:5],
-        confidence_score=best_similarity,
-        is_resolved=is_resolved_status,
-        session_id=session_id,
-        category=category,
-        response_time_ms=elapsed_ms,
-    )
+    # ── 8. Save to chat history (authenticated users only) ───────────────────
+    if user_id:
+        chat = await ch_repo.create(
+            user_id=user_id,
+            question=question,
+            answer=answer,
+            sources=merged[:5],
+            confidence_score=best_similarity,
+            is_resolved=is_resolved_status,
+            session_id=session_id,
+            category=category,
+            response_time_ms=elapsed_ms,
+        )
 
-    # ── 9. Flag as unresolved if needed ──────────────────────────────────────
-    if is_unresolved:
-        try:
-            await uq_repo.create(
-                chat_history_id=chat.id,
-                user_id=user_id,
-                question=question,
-                ai_attempt=answer,
-                confidence_score=best_similarity,
-                category=category,
-            )
-            logger.info(f"Question flagged as unresolved for admin review: '{question[:60]}'")
-        except Exception as e:
-            logger.warning(f"Failed to save unresolved question: {e}")
+        # ── 9. Flag as unresolved if needed ──────────────────────────────────
+        if is_unresolved:
+            try:
+                await uq_repo.create(
+                    chat_history_id=chat.id,
+                    user_id=user_id,
+                    question=question,
+                    ai_attempt=answer,
+                    confidence_score=best_similarity,
+                    category=category,
+                )
+                logger.info(f"Question flagged as unresolved for admin review: '{question[:60]}'")
+            except Exception as e:
+                logger.warning(f"Failed to save unresolved question: {e}")
 
     return {
         "answer": answer,

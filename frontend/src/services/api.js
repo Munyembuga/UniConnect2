@@ -1,9 +1,10 @@
 /**
  * Centralized API service.
- * All calls go to /api/... which Vite proxies to http://localhost:8000/api/v1/...
+ * Dev:  VITE_API_BASE_URL not set → '/api' (Vite proxy rewrites /api → /api/v1)
+ * Prod: VITE_API_BASE_URL = 'https://uniconnect-backend.onrender.com/api/v1'
  */
 
-const BASE = '/api'
+const BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 
 // ── Token helpers ────────────────────────────────────────────────────────────
 
@@ -17,6 +18,17 @@ export function getUser() {
   try { return JSON.parse(localStorage.getItem('user') || 'null') } catch { return null }
 }
 export function isAdmin() { return getUser()?.role === 'admin' }
+
+export function isTokenExpired() {
+  const token = getToken()
+  if (!token) return true
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.exp * 1000 < Date.now()
+  } catch {
+    return true
+  }
+}
 
 function authHeaders(json = true) {
   const token = getToken()
@@ -70,9 +82,19 @@ export async function changePassword(old_password, new_password) {
 // ── Chat ─────────────────────────────────────────────────────────────────────
 
 export async function askQuestion(question) {
-  return handleResponse(await fetch(`${BASE}/chat/ask`, {
+  if (isTokenExpired()) clearAuth()
+  const res = await fetch(`${BASE}/chat/ask`, {
     method: 'POST', headers: authHeaders(), body: JSON.stringify({ question }),
-  }))
+  })
+  if (res.status === 401) {
+    clearAuth()
+    const retry = await fetch(`${BASE}/chat/ask`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    })
+    return handleResponse(retry)
+  }
+  return handleResponse(res)
 }
 
 export async function getChatStatus() {

@@ -106,14 +106,16 @@ class ChromaClient:
           3. Legacy Client  → older chromadb versions
           4. EphemeralClient → pure in-memory fallback
         """
-        # 1. HTTP (Docker)
+        # 1. HTTP/HTTPS (Docker or Render)
         try:
             client = chromadb.HttpClient(
                 host=settings.CHROMA_HOST,
                 port=settings.CHROMA_PORT,
+                ssl=settings.CHROMA_SSL,
             )
             client.heartbeat()
-            logger.info(f"ChromaDB: connected via HTTP ({settings.CHROMA_HOST}:{settings.CHROMA_PORT})")
+            proto = "https" if settings.CHROMA_SSL else "http"
+            logger.info(f"ChromaDB: connected via {proto} ({settings.CHROMA_HOST}:{settings.CHROMA_PORT})")
             return client
         except Exception:
             pass

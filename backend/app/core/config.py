@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str = "change-me-in-production"
     JWT_REFRESH_SECRET_KEY: str = "change-me-in-production-refresh"
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
     # --- Gemini AI (embeddings + OCR) ---
     GEMINI_API_KEY: str = ""
@@ -53,12 +53,13 @@ class Settings(BaseSettings):
 
     # --- OpenRouter (chat generation) ---
     OPENROUTER_API_KEY: str = ""
-    OPENROUTER_MODEL: str = "google/gemini-3.5-flash"
+    OPENROUTER_MODEL: str = "google/gemini-2.5-flash"
 
 
     # --- ChromaDB ---
     CHROMA_HOST: str = "chromadb"
     CHROMA_PORT: int = 8001
+    CHROMA_SSL: bool = False          # set True on Render (service-to-service is HTTPS)
     CHROMA_COLLECTION_NAME: str = "uniconnect_knowledge"
 
     # --- File Uploads ---

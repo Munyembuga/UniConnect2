@@ -1,5 +1,5 @@
 services:
-  # ── ChromaDB vector database ────────────────────────────────────────────────
+  # ── 1. ChromaDB vector database ─────────────────────────────────────────────
   - type: web
     name: uniconnect-chromadb
     runtime: docker
@@ -15,14 +15,19 @@ services:
       - key: ANONYMIZED_TELEMETRY
         value: "FALSE"
 
-  # ── FastAPI backend ─────────────────────────────────────────────────────────
+  # ── 2. FastAPI backend ───────────────────────────────────────────────────────
   - type: web
     name: uniconnect-backend
     runtime: docker
     dockerContext: ./backend
     dockerfilePath: ./backend/Dockerfile
     plan: starter
+    disk:
+      name: uploads-data
+      mountPath: /app/uploads
+      sizeGB: 2
     envVars:
+      # App
       - key: APP_ENV
         value: production
       - key: DEBUG
@@ -31,6 +36,8 @@ services:
         value: "0.0.0.0"
       - key: PORT
         value: "8000"
+
+      # PostgreSQL — auto-wired from managed DB
       - key: DATABASE_URL
         fromDatabase:
           name: uniconnect-db
@@ -55,14 +62,18 @@ services:
         fromDatabase:
           name: uniconnect-db
           property: database
+
+      # AI keys — set manually in Render dashboard after first deploy
       - key: GEMINI_API_KEY
-        sync: false        # Set manually in Render dashboard
+        sync: false
       - key: GEMINI_MODEL
         value: gemini-2.0-flash
       - key: OPENROUTER_API_KEY
-        sync: false        # Set manually in Render dashboard
+        sync: false
       - key: OPENROUTER_MODEL
-        value: google/gemini-3.5-flash
+        value: google/gemini-2.5-flash
+
+      # ChromaDB — auto-wired from ChromaDB service; uses HTTPS on Render
       - key: CHROMA_HOST
         fromService:
           name: uniconnect-chromadb
@@ -70,24 +81,32 @@ services:
           property: host
       - key: CHROMA_PORT
         value: "443"
+      - key: CHROMA_SSL
+        value: "true"
       - key: CHROMA_COLLECTION_NAME
         value: uniconnect_knowledge
+
+      # JWT — set manually in Render dashboard (use long random strings)
       - key: JWT_SECRET_KEY
-        sync: false        # Set manually in Render dashboard
+        sync: false
       - key: JWT_REFRESH_SECRET_KEY
-        sync: false        # Set manually in Render dashboard
+        sync: false
       - key: JWT_ALGORITHM
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        value: "30"
+        value: "1440"
       - key: REFRESH_TOKEN_EXPIRE_DAYS
-        value: "7"
+        value: "30"
+
+      # File uploads
       - key: UPLOAD_DIR
         value: uploads
       - key: MAX_UPLOAD_SIZE_MB
         value: "50"
       - key: ALLOWED_EXTENSIONS
         value: ".pdf,.docx,.txt"
+
+      # RAG
       - key: CHUNK_SIZE
         value: "1000"
       - key: CHUNK_OVERLAP
@@ -96,11 +115,33 @@ services:
         value: "5"
       - key: CONFIDENCE_THRESHOLD
         value: "0.40"
+
+      # Rate limiting
       - key: RATE_LIMIT_PER_MINUTE
         value: "30"
+
+      # CORS — allow all origins (restrict to frontend URL once known)
       - key: CORS_ORIGINS
         value: '["*"]'
 
+  # ── 3. React frontend (static site) ─────────────────────────────────────────
+  - type: web
+    name: uniconnect-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    pullRequestPreviewsEnabled: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # REQUIRED: set this to your backend URL after first deploy
+      # Example: https://uniconnect-backend.onrender.com/api/v1
+      - key: VITE_API_BASE_URL
+        sync: false
+
+# ── Managed PostgreSQL database ───────────────────────────────────────────────
 databases:
   - name: uniconnect-db
     plan: starter
