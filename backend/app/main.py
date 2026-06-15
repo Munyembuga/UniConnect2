@@ -3,7 +3,7 @@ from collections import defaultdict
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, Response
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -165,14 +165,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ── CORS ─────────────────────────────────────────────────────────────────────
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,  # must be False when allow_origins=["*"]
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# ── CORS — custom middleware handles preflight for all routes including uploads ──
+_CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type, Accept, Origin, X-Requested-With",
+    "Access-Control-Max-Age": "86400",
+}
+
+@app.middleware("http")
+async def cors_middleware(request: Request, call_next) -> Response:
+    if request.method == "OPTIONS":
+        return Response(status_code=200, headers=_CORS_HEADERS)
+    response = await call_next(request)
+    for key, value in _CORS_HEADERS.items():
+        response.headers[key] = value
+    return response
 
 
 # ── Rate limiting middleware ──────────────────────────────────────────────────
