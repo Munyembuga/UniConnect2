@@ -78,10 +78,21 @@ async def _create_tables() -> None:
         logger.warning(f"Table creation failed (non-fatal): {e}")
 
 
-async def _seed_admin() -> None:
-    ADMIN_EMAIL    = "admin@uniconnect.com"
-    ADMIN_PASSWORD = "Admin@1234"
-    ADMIN_NAME     = "UniConnect Admin"
+async def _seed_users() -> None:
+    seed_accounts = [
+        {
+            "email": "munyembuga_222014445@stud.ur.ac.rw",
+            "full_name": "Jean de Dieu Munyembuga",
+            "password": "Admin@2024",
+            "role": "admin",
+        },
+        {
+            "email": "student@ur.ac.rw",
+            "full_name": "UR Student Demo",
+            "password": "Student@2024",
+            "role": "student",
+        },
+    ]
 
     try:
         from app.db.database import AsyncSessionLocal
@@ -90,23 +101,31 @@ async def _seed_admin() -> None:
         from sqlalchemy.future import select
 
         async with AsyncSessionLocal() as db:
-            result = await db.execute(select(User).where(User.email == ADMIN_EMAIL))
-            if not result.scalar_one_or_none():
-                admin = User(
-                    email=ADMIN_EMAIL,
-                    full_name=ADMIN_NAME,
-                    hashed_password=hash_password(ADMIN_PASSWORD),
-                    role=UserRole.ADMIN,
-                    is_active=True,
-                    is_verified=True,
+            for account in seed_accounts:
+                result = await db.execute(
+                    select(User).where(User.email == account["email"])
                 )
-                db.add(admin)
-                await db.commit()
-                logger.info(f"Default admin created: {ADMIN_EMAIL}")
-            else:
-                logger.info(f"Admin account already exists: {ADMIN_EMAIL}")
+                existing = result.scalar_one_or_none()
+                if not existing:
+                    user = User(
+                        email=account["email"],
+                        full_name=account["full_name"],
+                        hashed_password=hash_password(account["password"]),
+                        role=UserRole.ADMIN if account["role"] == "admin" else UserRole.STUDENT,
+                        is_active=True,
+                        is_verified=True,
+                    )
+                    db.add(user)
+                    logger.info(f"Seeded {account['role']}: {account['email']}")
+                else:
+                    # Ensure role is correct even if user already exists
+                    existing.role = UserRole.ADMIN if account["role"] == "admin" else UserRole.STUDENT
+                    existing.is_active = True
+                    existing.is_verified = True
+                    logger.info(f"Updated existing {account['role']}: {account['email']}")
+            await db.commit()
     except Exception as e:
-        logger.warning(f"Admin seeding failed (non-fatal): {e}")
+        logger.warning(f"User seeding failed (non-fatal): {e}")
 
 
 @asynccontextmanager
@@ -115,7 +134,7 @@ async def lifespan(app: FastAPI):
     settings.resolved_chroma_dir.mkdir(parents=True, exist_ok=True)
 
     await _create_tables()
-    await _seed_admin()
+    await _seed_users()
 
     database_ready = await ping_database()
     if database_ready:
