@@ -185,6 +185,31 @@ async def delete_document(
         )
 
 
+@router.delete(
+    "/",
+    summary="Delete ALL documents (Admin only)",
+)
+async def delete_all_documents(
+    admin: User = Depends(require_admin),
+    document_service: DocumentService = Depends(get_document_service),
+) -> dict:
+    try:
+        from app.repositories.document import DocumentRepository
+        repo = DocumentRepository(document_service.db)
+        all_docs = await repo.list_documents()
+        deleted, failed = 0, 0
+        for doc in all_docs:
+            try:
+                await document_service.delete_document(doc.id, admin.id)
+                deleted += 1
+            except Exception:
+                failed += 1
+        return {"deleted": deleted, "failed": failed, "message": f"Deleted {deleted} documents"}
+    except Exception as e:
+        logger.error(f"Error deleting all documents: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post(
     "/ingest-url",
     response_model=UrlIngestResponse,
